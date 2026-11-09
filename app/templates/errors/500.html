@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Terjadi Kesalahan{% endblock %}
+
+{% block content %}
+<div class="error-page card">
+  <span class="error-code">500</span>
+  <div class="empty-icon">{{ icon('info', 30) }}</div>
+  <h1>Terjadi kesalahan</h1>
+  <p>Maaf, aplikasi mengalami kendala. Silakan muat ulang halaman atau coba beberapa saat lagi.</p>
+  <a class="btn btn-primary" href="{{ url_for('auth.login') if not current_user.is_authenticated else (url_for('admin.dashboard') if current_user.role == 'admin' else url_for('guru.scan')) }}">
+    Kembali ke Beranda
+  </a>
+</div>
+{% endblock %}

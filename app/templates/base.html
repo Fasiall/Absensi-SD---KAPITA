@@ -1,0 +1,109 @@
+{% from "_icons.html" import icon %}
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2563EB">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block title %}Beranda{% endblock %} - {{ app_name }}</title>
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/favicon.png') }}">
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}{% if current_user.is_authenticated and current_user.role == 'guru' %} has-bottom-nav{% endif %}">
+<a class="skip-link" href="#main">Lewati ke konten</a>
+
+{% set home_url = url_for('admin.dashboard') if current_user.is_authenticated and current_user.role == 'admin' else url_for('guru.scan') %}
+
+{% macro nav_item(endpoint, label, icon_name, prefix=None) -%}
+  {% set active = request.endpoint == endpoint or (prefix and request.endpoint and request.endpoint.startswith(prefix)) %}
+  <a href="{{ url_for(endpoint) }}" class="nav-link{% if active %} active{% endif %}">
+    {{ icon(icon_name, 18) }}<span>{{ label }}</span>
+  </a>
+{%- endmacro %}
+
+{% if current_user.is_authenticated %}
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="{{ home_url }}">
+      <span class="brand-mark">{{ icon('qr', 22) }}</span>
+      <span class="brand-text">
+        <span class="brand-title">{{ school_name }}</span>
+        <span class="brand-sub">{{ app_name }}</span>
+      </span>
+    </a>
+
+    {% if current_user.role == 'admin' %}
+    <button class="icon-btn nav-toggle" type="button" aria-label="Buka menu" aria-expanded="false" data-nav-toggle>
+      {{ icon('menu', 22) }}
+    </button>
+    <nav class="main-nav" aria-label="Menu utama">
+      {{ nav_item('admin.dashboard', 'Dashboard', 'home') }}
+      {{ nav_item('admin.students', 'Siswa', 'users', 'admin.student') }}
+      {{ nav_item('admin.classes', 'Kelas', 'book', 'admin.class') }}
+      {{ nav_item('admin.teachers', 'Guru', 'user', 'admin.teacher') }}
+      {{ nav_item('admin.students_import', 'Impor', 'upload') }}
+      {{ nav_item('admin.reports', 'Rekap', 'chart') }}
+      {{ nav_item('print_cards.index', 'Cetak', 'printer', 'print_cards.') }}
+      {{ nav_item('guru.scan', 'Scan', 'scan') }}
+    </nav>
+    {% endif %}
+
+    <div class="topbar-user">
+      <div class="user-meta">
+        <span class="user-name">{{ current_user.nama }}</span>
+        <span class="user-role">{{ 'Admin' if current_user.role == 'admin' else 'Guru' }}</span>
+      </div>
+      <a class="icon-btn" href="{{ url_for('auth.change_password') }}" title="Ganti password" aria-label="Ganti password">
+        {{ icon('key', 20) }}
+      </a>
+      <form method="post" action="{{ url_for('auth.logout') }}" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="icon-btn" type="submit" title="Keluar" aria-label="Keluar">{{ icon('logout', 20) }}</button>
+      </form>
+    </div>
+  </div>
+</header>
+{% endif %}
+
+<main class="page" id="main">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-stack">
+      {% for category, message in messages %}
+      <div class="flash flash-{{ category }}" role="status">
+        <span>{{ message }}</span>
+        <button type="button" class="flash-close" aria-label="Tutup pesan" data-dismiss-flash>&times;</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</main>
+
+{% if current_user.is_authenticated and current_user.role == 'guru' %}
+<nav class="bottom-nav" aria-label="Menu guru">
+  <a href="{{ url_for('guru.scan') }}" class="bottom-link{% if request.endpoint == 'guru.scan' %} active{% endif %}">
+    <span class="bottom-icon">{{ icon('scan', 22) }}</span>
+    <span>Scan</span>
+  </a>
+  <a href="{{ url_for('guru.classes') }}" class="bottom-link{% if request.endpoint and request.endpoint.startswith('guru.class') %} active{% endif %}">
+    <span class="bottom-icon">{{ icon('book', 22) }}</span>
+    <span>Daftar Kelas</span>
+  </a>
+  <a href="{{ url_for('guru.reports') }}" class="bottom-link{% if request.endpoint and request.endpoint.startswith('guru.report') %} active{% endif %}">
+    <span class="bottom-icon">{{ icon('chart', 22) }}</span>
+    <span>Rekap</span>
+  </a>
+</nav>
+{% endif %}
+
+<script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

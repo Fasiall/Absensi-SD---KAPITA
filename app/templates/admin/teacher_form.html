@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Edit Guru{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Manajemen Data</p>
+    <h1>Edit Akun Guru</h1>
+    <p class="page-sub">Perbarui nama, username, status, atau password guru.</p>
+  </div>
+  <a class="btn btn-secondary" href="{{ url_for('admin.teachers') }}">{{ icon('arrow-left', 18) }} Kembali</a>
+</div>
+
+<div class="form-layout">
+  <div class="card card-lg">
+    <form method="post" class="stack-lg" data-loading>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="nama">Nama guru</label>
+          <input type="text" id="nama" name="nama" maxlength="100"
+                 value="{{ values.nama }}" required>
+        </div>
+        <div class="field">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" maxlength="50"
+                 value="{{ values.username }}" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="password">Password baru <span class="muted">(opsional)</span></label>
+        <input type="password" id="password" name="password" minlength="6"
+               autocomplete="new-password" placeholder="Kosongkan jika tidak ingin mengganti">
+        <p class="form-help">Isi minimal 6 karakter hanya jika ingin mengganti password.</p>
+      </div>
+
+      <div class="field">
+        <label class="checkbox">
+          <input type="checkbox" name="aktif" value="1" {% if values.aktif %}checked{% endif %}>
+          <span>Akun aktif</span>
+        </label>
+        <p class="form-help">Akun nonaktif tidak bisa masuk, tetapi datanya tetap tersimpan.</p>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ icon('check', 18) }} Simpan Perubahan</button>
+        <a class="btn btn-ghost" href="{{ url_for('admin.teachers') }}">Batal</a>
+      </div>
+    </form>
+  </div>
+
+  <aside class="card info-card">
+    <div class="info-card-icon">{{ icon('shield', 24) }}</div>
+    <h2>Keamanan akun</h2>
+    <p>
+      Password disimpan dalam bentuk hash, sehingga tidak bisa dibaca admin.
+      Jika guru lupa password, admin dapat mengatur password baru di halaman ini.
+    </p>
+    <p class="form-help">Nonaktifkan akun jika guru sudah tidak bertugas, agar riwayat tetap utuh.</p>
+  </aside>
+</div>
+{% endblock %}

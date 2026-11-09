@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% from "_macros.html" import empty_state %}
+{% block title %}Cetak Kartu QR{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Kartu Siswa</p>
+    <h1>Cetak Kartu QR</h1>
+    <p class="page-sub">Cetak kartu siap potong untuk satu kelas atau satu siswa.</p>
+  </div>
+  <a class="btn btn-secondary" href="{{ back_url }}">{{ icon('arrow-left', 18) }} Kembali</a>
+</div>
+
+<div class="split-layout">
+  <div class="card card-lg">
+    <div class="card-head">
+      <div>
+        <h2>Pilih Kelas</h2>
+        <p class="muted">Semua siswa aktif pada kelas akan dicetak.</p>
+      </div>
+      <span class="badge badge-info">A4 &middot; 10 kartu/lembar</span>
+    </div>
+
+    {% if classes %}
+    <form method="get" action="{{ url_for('print_cards.cards') }}" class="stack-lg">
+      <div class="field">
+        <label for="class_id">Kelas</label>
+        <select id="class_id" name="class_id" required>
+          <option value="">Pilih kelas</option>
+          {% for class in classes %}
+          <option value="{{ class.id }}">Kelas {{ class.nama_kelas }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ icon('printer', 18) }} Buka Halaman Cetak</button>
+      </div>
+    </form>
+
+    <div class="divider"></div>
+    <div class="info-banner info-banner-flat">
+      {{ icon('info', 18) }}
+      <p>
+        Untuk mencetak ulang satu kartu, buka halaman Data Siswa lalu tekan tombol
+        <strong>Kartu</strong> pada siswa tersebut. Di halaman cetak, gunakan tombol
+        Cetak lalu pilih ukuran kertas A4.
+      </p>
+    </div>
+    {% else %}
+      {{ empty_state(
+          'Belum ada kelas',
+          'Tambahkan kelas dan siswa terlebih dahulu untuk mencetak kartu QR.',
+          'printer'
+      ) }}
+    {% endif %}
+  </div>
+
+  <aside class="card info-card">
+    <div class="info-card-icon">{{ icon('printer', 24) }}</div>
+    <h2>Tips mencetak</h2>
+    <ul class="check-list">
+      <li>Gunakan kertas A4, orientasi potret.</li>
+      <li>Atur skala cetak 100% (jangan Fit to page).</li>
+      <li>Matikan header/footer browser saat mencetak.</li>
+      <li>Gunakan kertas tebal lalu potong mengikuti garis.</li>
+      <li>Simpan cadangan file PDF kartu untuk cetak ulang.</li>
+    </ul>
+  </aside>
+</div>
+{% endblock %}

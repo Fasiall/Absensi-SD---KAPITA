@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% from "_macros.html" import empty_state %}
+{% block title %}Data Kelas{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Manajemen Data</p>
+    <h1>Data Kelas</h1>
+    <p class="page-sub">Atur kelas dan tugaskan guru pengampu untuk setiap kelas.</p>
+  </div>
+  <a class="btn btn-secondary" href="{{ url_for('admin.teachers') }}">{{ icon('user', 18) }} Kelola Guru</a>
+</div>
+
+<div class="split-layout">
+  <div class="card card-flush">
+    {% if class_rows %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Kelas</th>
+            <th>Guru Pengampu</th>
+            <th>Jumlah Siswa</th>
+            <th class="th-actions">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in class_rows %}
+          <tr>
+            <td><span class="class-pill class-pill-lg">{{ row.class.nama_kelas }}</span></td>
+            <td>
+              {% if row.class.guru %}
+              <div class="cell-main">{{ row.class.guru.nama }}</div>
+              <div class="cell-sub">@{{ row.class.guru.username }}</div>
+              {% else %}
+              <span class="badge badge-belum">Belum ditugaskan</span>
+              {% endif %}
+            </td>
+            <td>
+              <strong>{{ row.active_count }}</strong>
+              <span class="muted">/ {{ row.student_count }} siswa</span>
+            </td>
+            <td>
+              <div class="table-actions">
+                <a class="btn btn-secondary btn-sm" href="{{ url_for('print_cards.cards', class_id=row.class.id) }}">
+                  {{ icon('printer', 16) }}<span class="hide-sm">Kartu</span>
+                </a>
+                <a class="btn btn-secondary btn-sm" href="{{ url_for('admin.class_edit', class_id=row.class.id) }}">
+                  {{ icon('edit', 16) }}<span class="hide-sm">Edit</span>
+                </a>
+                {% if row.student_count == 0 %}
+                <form method="post" action="{{ url_for('admin.class_delete', class_id=row.class.id) }}" class="inline-form">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="btn btn-danger btn-sm"
+                          data-confirm="Hapus kelas {{ row.class.nama_kelas }}? Tindakan ini tidak bisa dibatalkan.">
+                    {{ icon('trash', 16) }}<span class="hide-sm">Hapus</span>
+                  </button>
+                </form>
+                {% else %}
+                <span class="btn btn-danger btn-sm disabled" title="Kosongkan siswa terlebih dahulu">
+                  {{ icon('trash', 16) }}<span class="hide-sm">Hapus</span>
+                </span>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      {{ empty_state(
+          'Belum ada kelas',
+          'Tambahkan kelas pertama melalui formulir di samping. Contoh: 1A, 1B, 2A.',
+          'book'
+      ) }}
+    {% endif %}
+  </div>
+
+  <aside class="card side-card">
+    <div class="card-head">
+      <div>
+        <h2>Tambah Kelas</h2>
+        <p class="muted">Kelas baru langsung bisa dipakai.</p>
+      </div>
+    </div>
+    <form method="post" class="stack-lg" data-loading>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="field">
+        <label for="nama_kelas">Nama kelas</label>
+        <input type="text" id="nama_kelas" name="nama_kelas" maxlength="20"
+               placeholder="Contoh: 1A" required>
+        <p class="form-help">Gunakan nama singkat, misalnya 1A atau 6B.</p>
+      </div>
+      <div class="field">
+        <label for="guru_id">Guru pengampu</label>
+        <select id="guru_id" name="guru_id">
+          <option value="">Belum ditugaskan</option>
+          {% for teacher in teachers %}
+          <option value="{{ teacher.id }}">{{ teacher.nama }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">{{ icon('plus', 18) }} Tambah Kelas</button>
+    </form>
+    {% if not teachers %}
+    <p class="form-help">
+      Belum ada akun guru aktif. Buat akun guru terlebih dahulu agar bisa ditugaskan ke kelas.
+    </p>
+    {% endif %}
+  </aside>
+</div>
+{% endblock %}

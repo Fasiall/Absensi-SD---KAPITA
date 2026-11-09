@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Edit Kelas{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Manajemen Data</p>
+    <h1>Edit Kelas {{ school_class.nama_kelas }}</h1>
+    <p class="page-sub">Ubah nama kelas atau tugaskan guru pengampu.</p>
+  </div>
+  <a class="btn btn-secondary" href="{{ url_for('admin.classes') }}">{{ icon('arrow-left', 18) }} Kembali</a>
+</div>
+
+<div class="card card-lg form-narrow">
+  <form method="post" class="stack-lg" data-loading>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="field">
+      <label for="nama_kelas">Nama kelas</label>
+      <input type="text" id="nama_kelas" name="nama_kelas" maxlength="20"
+             value="{{ values.nama_kelas }}" required>
+    </div>
+
+    <div class="field">
+      <label for="guru_id">Guru pengampu</label>
+      <select id="guru_id" name="guru_id">
+        <option value="">Belum ditugaskan</option>
+        {% for teacher in teachers %}
+        <option value="{{ teacher.id }}" {% if values.guru_id|string == teacher.id|string %}selected{% endif %}>
+          {{ teacher.nama }} (@{{ teacher.username }})
+        </option>
+        {% endfor %}
+      </select>
+      <p class="form-help">Guru hanya dapat mengakses kelas yang ditugaskan kepadanya.</p>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">{{ icon('check', 18) }} Simpan Perubahan</button>
+      <a class="btn btn-ghost" href="{{ url_for('admin.classes') }}">Batal</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

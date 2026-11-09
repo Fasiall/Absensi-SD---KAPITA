@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% from "_macros.html" import empty_state %}
+{% block title %}Scan Absensi{% endblock %}
+
+{% block content %}
+{% if no_class %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Absensi</p>
+    <h1>Scan Absensi</h1>
+    <p class="page-sub">Belum ada kelas yang bisa Anda akses.</p>
+  </div>
+</div>
+<div class="card">
+  {{ empty_state(
+      'Akun belum ditugaskan ke kelas',
+      'Hubungi admin sekolah agar akun Anda ditugaskan ke kelas. Setelah itu halaman scan bisa digunakan.',
+      'book'
+  ) }}
+</div>
+{% else %}
+
+{% set percent = ((counts.Hadir / counts.total * 100) if counts.total else 0) %}
+
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Absensi</p>
+    <h1>Scan Absensi</h1>
+    <p class="page-sub">Arahkan kamera ke kartu QR siswa. Kehadiran tercatat otomatis.</p>
+  </div>
+  <span class="date-chip">{{ icon('clock', 18) }} {{ tanggal|tanggal_id }}</span>
+</div>
+
+<form class="scan-filter card" method="get" action="{{ url_for('guru.scan') }}">
+  <div class="field">
+    <label for="kelas">Kelas</label>
+    <select id="kelas" name="kelas" data-autosubmit>
+      {% for class in classes %}
+      <option value="{{ class.id }}" {% if class.id == school_class.id %}selected{% endif %}>
+        Kelas {{ class.nama_kelas }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label for="tanggal">Tanggal absensi</label>
+    <input type="date" id="tanggal" name="tanggal" value="{{ tanggal.isoformat() }}"
+           max="{{ today.isoformat() }}" data-autosubmit>
+  </div>
+  <noscript>
+    <button type="submit" class="btn btn-primary">Terapkan</button>
+  </noscript>
+</form>
+
+<div id="scan-page"
+     data-class-id="{{ school_class.id }}"
+     data-user-id="{{ current_user.id }}"
+     data-tanggal="{{ tanggal.isoformat() }}"
+     data-counts='{{ counts|tojson }}'
+     data-student-count="{{ students|length }}">
+
+  <div class="scan-layout">
+    <section class="scan-main">
+      <div class="card scanner-card">
+        <div class="scanner-top">
+          <div>
+            <h2>Scan Kartu Siswa</h2>
+            <p class="muted">Kamera akan menyala otomatis. Pastikan pencahayaan cukup.</p>
+          </div>
+          <span class="scanner-live" id="camera-status">Menyiapkan kamera</span>
+        </div>
+
+        <div class="camera-shell">
+          <div id="reader"></div>
+          <div class="scan-frame" aria-hidden="true">
+            <span class="corner corner-tl"></span>
+            <span class="corner corner-tr"></span>
+            <span class="corner corner-bl"></span>
+            <span class="corner corner-br"></span>
+          </div>
+          <div class="camera-overlay" id="camera-overlay">
+            <span class="camera-overlay-icon">{{ icon('camera', 30) }}</span>
+            <p id="camera-message">Izinkan akses kamera untuk mulai memindai kartu QR.</p>
+            <button type="button" class="btn btn-primary" id="camera-start">
+              {{ icon('camera', 18) }} Nyalakan Kamera
+            </button>
+          </div>
+        </div>
+
+        <div class="camera-actions">
+          <button type="button" class="btn btn-secondary" id="camera-toggle" disabled>
+            {{ icon('camera', 18) }} <span id="camera-toggle-text">Memuat kamera</span>
+          </button>
+          <span class="scan-hint" id="scan-hint">Scan berjalan otomatis saat QR terdeteksi.</span>
+        </div>
+
+        <div class="offline-banner" id="offline-banner" hidden>
+          {{ icon('sync', 18) }}
+          <span>
+            <strong id="pending-text">Ada absensi menunggu sinkron.</strong>
+            Data tersimpan di perangkat dan akan dikirim saat online.
+          </span>
+          <button type="button" class="btn btn-warning btn-sm" id="sync-button">Sinkronkan</button>
+        </div>
+      </div>
+
+      <div class="card counter-card">
+        <div class="counter-head">
+          <div>
+            <span class="counter-kicker">Kehadiran kelas {{ school_class.nama_kelas }}</span>
+            <strong class="counter-main">
+              <span id="count-hadir">{{ counts.Hadir }}</span>/<span id="count-total">{{ counts.total }}</span> hadir
+            </strong>
+          </div>
+          <span class="counter-percent" id="count-percent">{{ percent|round(0)|int }}%</span>
+        </div>
+        <div class="progress progress-lg">
+          <div class="progress-bar" id="count-bar" style="width: {{ '%.1f'|format(percent) }}%"></div>
+        </div>
+        <div class="chip-row counter-chips">
+          <span class="chip chip-sakit">Sakit <b id="count-sakit">{{ counts.Sakit }}</b></span>
+          <span class="chip chip-izin">Izin <b id="count-izin">{{ counts.Izin }}</b></span>
+          <span class="chip chip-alpa">Alpa <b id="count-alpa">{{ counts.Alpa }}</b></span>
+          <span class="chip chip-belum">Belum <b id="count-belum">{{ counts.Belum }}</b></span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card list-card">
+      <div class="card-head">
+        <div>
+          <h2>Daftar Siswa</h2>
+          <p class="muted">{{ tanggal|tanggal_singkat }} &middot; Kelas {{ school_class.nama_kelas }}</p>
+        </div>
+        <span class="badge badge-belum" id="list-count">{{ students|length }} siswa</span>
+      </div>
+
+      {% if students %}
+      <div class="filter-chips" role="group" aria-label="Filter daftar siswa">
+        <button type="button" class="filter-chip active" data-list-filter="all">Semua</button>
+        <button type="button" class="filter-chip" data-list-filter="Belum">Belum</button>
+        <button type="button" class="filter-chip" data-list-filter="Hadir">Hadir</button>
+      </div>
+
+      <ul class="student-list" id="student-list">
+        {% for student in students %}
+        {% set record = attendance.get(student.id) %}
+        {% set status_value = record.status if record else 'Belum' %}
+        <li class="student-row" data-student-id="{{ student.id }}" data-qr="{{ student.qr_code }}" data-status="{{ status_value }}">
+          <div class="student-info">
+            <strong>{{ student.nama }}</strong>
+            <span>NIS {{ student.nis }}</span>
+            {% if record and record.catatan %}
+            <small class="student-note">{{ record.catatan }}</small>
+            {% endif %}
+          </div>
+          <div class="student-side">
+            <span class="badge badge-{{ status_value|lower }}" data-status-badge>{{ status_value }}</span>
+            <button type="button" class="btn btn-secondary btn-sm" data-open-status
+                    data-student-id="{{ student.id }}"
+                    data-student-name="{{ student.nama }}"
+                    data-status="{{ status_value }}"
+                    data-catatan="{{ record.catatan if record and record.catatan else '' }}">
+              Ubah
+            </button>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+        {{ empty_state(
+            'Belum ada siswa aktif',
+            'Kelas ini belum memiliki siswa aktif. Hubungi admin untuk menambahkan data siswa.',
+            'users'
+        ) }}
+      {% endif %}
+    </section>
+  </div>
+</div>
+
+<dialog id="status-dialog" class="sheet" aria-labelledby="dialog-name">
+  <div class="sheet-head">
+    <div>
+      <p class="eyebrow">Ubah Status Manual</p>
+      <h2 id="dialog-name">Nama Siswa</h2>
+    </div>
+    <button type="button" class="icon-btn" data-close-dialog aria-label="Tutup">
+      {{ icon('x', 20) }}
+    </button>
+  </div>
+  <p class="muted">Ketuk salah satu status. Perubahan langsung disimpan.</p>
+  <div class="status-options">
+    <button type="button" class="status-option status-option-hadir" data-status-choice="Hadir">
+      {{ icon('check', 20) }}<span>Hadir</span>
+    </button>
+    <button type="button" class="status-option status-option-sakit" data-status-choice="Sakit">
+      {{ icon('info', 20) }}<span>Sakit</span>
+    </button>
+    <button type="button" class="status-option status-option-izin" data-status-choice="Izin">
+      {{ icon('document', 20) }}<span>Izin</span>
+    </button>
+    <button type="button" class="status-option status-option-alpa" data-status-choice="Alpa">
+      {{ icon('x', 20) }}<span>Alpa</span>
+    </button>
+  </div>
+  <div class="field">
+    <label for="status-note">Catatan <span class="muted">(opsional)</span></label>
+    <input type="text" id="status-note" maxlength="255" placeholder="Contoh: Surat dokter">
+  </div>
+  <div class="sheet-actions">
+    <button type="button" class="btn btn-ghost btn-block" data-close-dialog>Batal</button>
+  </div>
+  <p class="form-help form-error" id="status-error" hidden></p>
+</dialog>
+
+<div class="scan-flash" id="scan-flash" hidden role="status" aria-live="assertive">
+  <div class="scan-flash-inner">
+    <span class="scan-flash-icon" id="flash-icon"></span>
+    <p class="scan-flash-label" id="flash-label">Berhasil</p>
+    <h2 class="scan-flash-name" id="flash-name">Nama Siswa</h2>
+    <p class="scan-flash-message" id="flash-message"></p>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='vendor/html5-qrcode.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/scan.js') }}"></script>
+{% endblock %}

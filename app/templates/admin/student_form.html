@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}{{ 'Edit Siswa' if student else 'Tambah Siswa' }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Manajemen Data</p>
+    <h1>{{ 'Edit Data Siswa' if student else 'Tambah Siswa' }}</h1>
+    <p class="page-sub">
+      {{ 'Perbarui data siswa atau ganti kode QR jika kartu hilang.' if student else 'Isi data siswa dengan lengkap. Kode QR dibuat otomatis.' }}
+    </p>
+  </div>
+  <a class="btn btn-secondary" href="{{ url_for('admin.students') }}">{{ icon('arrow-left', 18) }} Kembali</a>
+</div>
+
+<div class="form-layout">
+  <div class="card card-lg">
+    <form method="post" class="stack-lg" data-loading>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <div class="form-grid">
+        <div class="field">
+          <label for="nis">NIS</label>
+          <input type="text" id="nis" name="nis" value="{{ values.nis }}"
+                 maxlength="30" placeholder="Contoh: 2024001" required>
+          <p class="form-help">Nomor induk siswa, harus unik.</p>
+        </div>
+
+        <div class="field">
+          <label for="nama">Nama lengkap</label>
+          <input type="text" id="nama" name="nama" value="{{ values.nama }}"
+                 maxlength="100" placeholder="Contoh: Siswa 1A-01" required>
+        </div>
+
+        <div class="field">
+          <label for="class_id">Kelas</label>
+          <select id="class_id" name="class_id" required>
+            <option value="">Pilih kelas</option>
+            {% for class in classes %}
+            <option value="{{ class.id }}" {% if values.class_id|string == class.id|string %}selected{% endif %}>
+              Kelas {{ class.nama_kelas }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="field field-center">
+          <label class="checkbox">
+            <input type="checkbox" name="aktif" value="1" {% if values.aktif %}checked{% endif %}>
+            <span>Siswa aktif</span>
+          </label>
+          <p class="form-help">Siswa nonaktif tidak muncul saat scan dan cetak kartu.</p>
+        </div>
+      </div>
+
+      {% if student %}
+      <div class="divider"></div>
+      <div class="field">
+        <label class="checkbox">
+          <input type="checkbox" name="regenerate_qr" value="1">
+          <span>Buat ulang kode QR</span>
+        </label>
+        <p class="form-help">
+          Centang jika kartu QR siswa hilang atau bocor. Kartu lama tidak akan berlaku lagi.
+        </p>
+      </div>
+      {% endif %}
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          {{ icon('check', 18) }} {{ 'Simpan Perubahan' if student else 'Simpan Siswa' }}
+        </button>
+        <a class="btn btn-ghost" href="{{ url_for('admin.students') }}">Batal</a>
+      </div>
+    </form>
+  </div>
+
+  {% if student %}
+  <aside class="card qr-side-card">
+    <div class="card-head">
+      <div>
+        <h2>Kartu QR</h2>
+        <p class="muted">Kode ini yang dipindai saat absensi.</p>
+      </div>
+    </div>
+    {% if qr_image %}
+    <img class="qr-preview" src="{{ qr_image }}" alt="Kode QR {{ student.nama }}">
+    {% endif %}
+    <code class="qr-code-text">{{ student.qr_code }}</code>
+    <a class="btn btn-secondary btn-block" href="{{ url_for('print_cards.cards', student_id=student.id) }}">
+      {{ icon('printer', 18) }} Cetak Kartu
+    </a>
+    <p class="form-help">
+      Kode QR hanya berisi kode acak, bukan nama atau data pribadi siswa.
+    </p>
+  </aside>
+  {% else %}
+  <aside class="card info-card">
+    <div class="info-card-icon">{{ icon('shield', 24) }}</div>
+    <h2>Kode QR otomatis</h2>
+    <p>
+      Setiap siswa mendapat kode QR acak yang unik. Kartu bisa dicetak kapan saja
+      dari halaman data siswa atau menu Cetak.
+    </p>
+    <p class="form-help">Kode QR tidak memuat nama, NIS, maupun data pribadi.</p>
+  </aside>
+  {% endif %}
+</div>
+{% endblock %}

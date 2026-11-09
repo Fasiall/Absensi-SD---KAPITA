@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Masuk{% endblock %}
+{% block body_class %}auth-body{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <section class="auth-hero">
+    <span class="hero-badge">{{ icon('qr', 30) }}</span>
+    <p class="hero-eyebrow">{{ school_name }}</p>
+    <h1>Absensi QR<br>Siswa SD</h1>
+    <p class="hero-text">
+      Cukup pindai kartu QR siswa, kehadiran langsung tercatat rapi.
+      Praktis dipakai guru lewat HP.
+    </p>
+    <ul class="hero-points">
+      <li>{{ icon('check', 18) }} Scan kartu dengan kamera HP</li>
+      <li>{{ icon('check', 18) }} Rekap otomatis dan siap diekspor</li>
+      <li>{{ icon('check', 18) }} Data aman, hanya untuk sekolah</li>
+    </ul>
+    <div class="hero-deco hero-deco-one"></div>
+    <div class="hero-deco hero-deco-two"></div>
+  </section>
+
+  <section class="auth-card card card-lg">
+    <div class="auth-brand">
+      <span class="brand-mark">{{ icon('qr', 22) }}</span>
+      <div>
+        <strong>{{ app_name }}</strong>
+        <span>{{ school_name }}</span>
+      </div>
+    </div>
+    <h2>Masuk ke Aplikasi</h2>
+    <p class="muted">Gunakan akun admin atau guru yang diberikan oleh sekolah.</p>
+
+    <form method="post" class="stack-lg" data-loading>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="next" value="{{ next_url }}">
+
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" autocomplete="username"
+               placeholder="Contoh: guru1" required autofocus>
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password"
+               placeholder="Masukkan password" required>
+      </div>
+
+      <label class="checkbox">
+        <input type="checkbox" name="remember" value="1">
+        <span>Ingat saya di perangkat ini</span>
+      </label>
+
+      <button type="submit" class="btn btn-primary btn-block">
+        {{ icon('login', 20) }} Masuk
+      </button>
+    </form>
+
+    <p class="auth-hint">
+      {{ icon('info', 16) }}
+      Belum bisa masuk? Hubungi admin sekolah untuk mendapatkan akun.
+    </p>
+  </section>
+</div>
+{% endblock %}

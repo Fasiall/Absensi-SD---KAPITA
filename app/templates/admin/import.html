@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Impor Siswa{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Manajemen Data</p>
+    <h1>Impor Siswa</h1>
+    <p class="page-sub">Tambahkan banyak siswa sekaligus dari file Excel (.xlsx) atau CSV.</p>
+  </div>
+  <a class="btn btn-secondary" href="{{ url_for('admin.students') }}">{{ icon('arrow-left', 18) }} Kembali</a>
+</div>
+
+<div class="split-layout">
+  <div class="card card-lg">
+    <div class="card-head">
+      <div>
+        <h2>Unggah File</h2>
+        <p class="muted">Gunakan template agar format kolom sesuai.</p>
+      </div>
+      <a class="btn btn-secondary btn-sm" href="{{ url_for('admin.students_template') }}">
+        {{ icon('download', 16) }} Template
+      </a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="stack-lg" data-loading>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <label class="file-drop" for="file">
+        <span class="file-drop-icon">{{ icon('upload', 28) }}</span>
+        <strong>Pilih file Excel atau CSV</strong>
+        <span class="muted">Klik untuk memilih file. Maksimal 5 MB.</span>
+        <input type="file" id="file" name="file" accept=".xlsx,.csv" required>
+      </label>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">{{ icon('upload', 18) }} Mulai Impor</button>
+        <a class="btn btn-ghost" href="{{ url_for('admin.students') }}">Batal</a>
+      </div>
+    </form>
+
+    {% if result %}
+    <div class="divider"></div>
+    <div class="import-result">
+      <h3>Hasil Impor</h3>
+      <div class="stats stats-small">
+        <div class="stat-card">
+          <span class="stat-icon stat-icon-green">{{ icon('check', 20) }}</span>
+          <div>
+            <span class="stat-label">Berhasil</span>
+            <strong class="stat-value">{{ result.created }}</strong>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon stat-icon-amber">{{ icon('x', 20) }}</span>
+          <div>
+            <span class="stat-label">Dilewati</span>
+            <strong class="stat-value">{{ result.skipped }}</strong>
+          </div>
+        </div>
+      </div>
+
+      {% if errors %}
+      <div class="error-list">
+        <h4>Baris yang perlu diperbaiki</h4>
+        <ul>
+          {% for error in errors %}
+          <li>{{ error }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <aside class="stack">
+    <div class="card info-card">
+      <div class="info-card-icon">{{ icon('info', 24) }}</div>
+      <h2>Cara impor</h2>
+      <ol class="step-list">
+        <li>Unduh template Excel melalui tombol Template.</li>
+        <li>Isi kolom <strong>NIS</strong>, <strong>Nama</strong>, dan <strong>Kelas</strong>.</li>
+        <li>Simpan file, lalu unggah di formulir ini.</li>
+        <li>Periksa hasil impor dan perbaiki baris yang dilewati.</li>
+      </ol>
+      <p class="form-help">NIS harus unik. Baris dengan NIS yang sudah terdaftar akan dilewati.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <h2>Kelas Tersedia</h2>
+          <p class="muted">Nama kelas harus sama persis.</p>
+        </div>
+      </div>
+      {% if classes %}
+      <div class="chip-row">
+        {% for class in classes %}
+        <span class="class-pill">{{ class.nama_kelas }}</span>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="muted">Belum ada kelas. Tambahkan kelas terlebih dahulu.</p>
+      {% endif %}
+    </div>
+  </aside>
+</div>
+{% endblock %}

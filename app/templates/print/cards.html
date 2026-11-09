@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} - {{ school_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/print.css') }}">
+</head>
+<body class="print-body">
+  <div class="print-toolbar no-print">
+    <div class="toolbar-info">
+      <strong>{{ title }}</strong>
+      <span>{{ students|length }} kartu &middot; {{ sheets|length }} lembar A4</span>
+    </div>
+    <div class="toolbar-actions">
+      <a class="toolbar-btn toolbar-btn-light" href="{{ back_url }}">Kembali</a>
+      <button type="button" class="toolbar-btn toolbar-btn-primary" onclick="window.print()">Cetak</button>
+    </div>
+  </div>
+
+  <p class="print-note no-print">
+    Tips: pilih kertas A4, skala 100%, dan matikan header/footer browser.
+  </p>
+
+  {% for sheet in sheets %}
+  <section class="sheet">
+    {% for student in sheet %}
+    <article class="qr-card">
+      <div class="qr-card-accent"></div>
+      <div class="qr-card-head">
+        <span class="school-name">{{ school_name }}</span>
+        <span class="card-label">Kartu Absensi</span>
+      </div>
+      <div class="qr-card-body">
+        <img class="qr-image" src="{{ qr_images[student.id] }}" alt="Kode QR {{ student.nama }}">
+        <div class="qr-card-text">
+          <h2>{{ student.nama }}</h2>
+          <p class="student-class">Kelas {{ student.school_class.nama_kelas }}</p>
+          <p class="student-nis">NIS {{ student.nis }}</p>
+          <p class="student-code">{{ student.qr_code }}</p>
+        </div>
+      </div>
+      <div class="qr-card-foot">Simpan kartu ini untuk absensi harian</div>
+    </article>
+    {% endfor %}
+  </section>
+  {% endfor %}
+</body>
+</html>

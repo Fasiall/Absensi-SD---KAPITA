@@ -1,0 +1,35 @@
+{% from "_icons.html" import icon %}
+
+{% macro status_badge(status, extra='') -%}
+{% set key = (status or 'Belum')|lower %}
+<span class="badge badge-{{ key }} {{ extra }}">{{ status or 'Belum' }}</span>
+{%- endmacro %}
+
+{% macro empty_state(title, message, icon_name='document', action_url=None, action_label=None) -%}
+<div class="empty-state">
+  <div class="empty-icon">{{ icon(icon_name, 30) }}</div>
+  <h3>{{ title }}</h3>
+  <p>{{ message }}</p>
+  {% if action_url and action_label %}
+  <a class="btn btn-primary" href="{{ action_url }}">{{ action_label }}</a>
+  {% endif %}
+</div>
+{%- endmacro %}
+
+{% macro pagination_nav(pagination) -%}
+{% if pagination and pagination.pages > 1 %}
+<nav class="pagination" aria-label="Navigasi halaman">
+  {% if pagination.has_prev %}
+  <a class="btn btn-secondary btn-sm" href="{{ page_url(pagination.prev_num) }}">Sebelumnya</a>
+  {% else %}
+  <span class="btn btn-secondary btn-sm disabled" aria-disabled="true">Sebelumnya</span>
+  {% endif %}
+  <span class="page-info">Halaman {{ pagination.page }} dari {{ pagination.pages }}</span>
+  {% if pagination.has_next %}
+  <a class="btn btn-secondary btn-sm" href="{{ page_url(pagination.next_num) }}">Berikutnya</a>
+  {% else %}
+  <span class="btn btn-secondary btn-sm disabled" aria-disabled="true">Berikutnya</span>
+  {% endif %}
+</nav>
+{% endif %}
+{%- endmacro %}

@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% from "_macros.html" import empty_state %}
+{% block title %}Daftar Kelas{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Kelas Saya</p>
+    <h1>Daftar Kelas</h1>
+    <p class="page-sub">Pilih kelas untuk scan absensi atau melihat rekap.</p>
+  </div>
+  <span class="date-chip">{{ icon('clock', 18) }} {{ today|tanggal_id }}</span>
+</div>
+
+{% if rows %}
+<div class="class-grid class-grid-wide">
+  {% for row in rows %}
+  <article class="class-card">
+    <div class="class-card-head">
+      <div>
+        <h3>Kelas {{ row.class.nama_kelas }}</h3>
+        <p class="muted">{{ row.total }} siswa aktif</p>
+      </div>
+      <span class="class-percent">{{ row.percent }}%</span>
+    </div>
+    <div class="progress" role="img" aria-label="{{ row.percent }} persen hadir hari ini">
+      <div class="progress-bar" style="width: {{ row.percent }}%"></div>
+    </div>
+    <div class="class-meta">
+      <span><strong>{{ row.counts.Hadir }}</strong>/{{ row.total }} hadir hari ini</span>
+      <span>{{ row.counts.Belum }} belum</span>
+    </div>
+    <div class="chip-row">
+      <span class="chip chip-sakit">Sakit {{ row.counts.Sakit }}</span>
+      <span class="chip chip-izin">Izin {{ row.counts.Izin }}</span>
+      <span class="chip chip-alpa">Alpa {{ row.counts.Alpa }}</span>
+    </div>
+    <div class="class-actions">
+      <a class="btn btn-primary" href="{{ url_for('guru.scan', kelas=row.class.id) }}">
+        {{ icon('scan', 18) }} Scan
+      </a>
+      <a class="btn btn-secondary" href="{{ url_for('guru.reports', kelas=row.class.id) }}">
+        {{ icon('chart', 18) }} Rekap
+      </a>
+      <a class="btn btn-ghost" href="{{ url_for('print_cards.cards', class_id=row.class.id) }}"
+         title="Cetak kartu kelas {{ row.class.nama_kelas }}">
+        {{ icon('printer', 18) }}
+      </a>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card">
+  {{ empty_state(
+      'Belum ada kelas',
+      'Akun Anda belum ditugaskan ke kelas mana pun. Hubungi admin sekolah untuk penugasan kelas.',
+      'book'
+  ) }}
+</div>
+{% endif %}
+{% endblock %}

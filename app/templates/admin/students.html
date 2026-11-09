@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% from "_macros.html" import status_badge, empty_state, pagination_nav with context %}
+{% block title %}Data Siswa{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Manajemen Data</p>
+    <h1>Data Siswa</h1>
+    <p class="page-sub">{{ total }} siswa terdaftar. Cari berdasarkan nama atau NIS.</p>
+  </div>
+  <div class="head-actions">
+    <a class="btn btn-secondary" href="{{ url_for('admin.students_import') }}">{{ icon('upload', 18) }} Impor</a>
+    <a class="btn btn-primary" href="{{ url_for('admin.student_add') }}">{{ icon('plus', 18) }} Tambah Siswa</a>
+  </div>
+</div>
+
+<form class="filter-bar card" method="get" action="{{ url_for('admin.students') }}">
+  <div class="field field-grow">
+    <label for="q">Cari siswa</label>
+    <input type="search" id="q" name="q" value="{{ q }}" placeholder="Nama atau NIS">
+  </div>
+  <div class="field">
+    <label for="kelas">Kelas</label>
+    <select id="kelas" name="kelas">
+      <option value="">Semua kelas</option>
+      {% for class in classes %}
+      <option value="{{ class.id }}" {% if selected_class_id == class.id %}selected{% endif %}>
+        Kelas {{ class.nama_kelas }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="filter-actions">
+    <button type="submit" class="btn btn-primary">{{ icon('search', 18) }} Cari</button>
+    {% if q or selected_class_id %}
+    <a class="btn btn-ghost" href="{{ url_for('admin.students') }}">Reset</a>
+    {% endif %}
+  </div>
+</form>
+
+<div class="card card-flush">
+  {% if pagination.items %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>NIS</th>
+          <th>Nama Siswa</th>
+          <th>Kelas</th>
+          <th class="hide-sm">Kode QR</th>
+          <th>Status</th>
+          <th class="th-actions">Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for student in pagination.items %}
+        <tr>
+          <td class="mono">{{ student.nis }}</td>
+          <td>
+            <div class="cell-main">{{ student.nama }}</div>
+          </td>
+          <td><span class="class-pill">{{ student.school_class.nama_kelas }}</span></td>
+          <td class="hide-sm mono muted">{{ student.qr_code }}</td>
+          <td>{{ status_badge('Aktif' if student.aktif else 'Nonaktif') }}</td>
+          <td>
+            <div class="table-actions">
+              <a class="btn btn-secondary btn-sm" href="{{ url_for('print_cards.cards', student_id=student.id) }}"
+                 title="Cetak kartu QR {{ student.nama }}">
+                {{ icon('qr', 16) }}<span class="hide-sm">Kartu</span>
+              </a>
+              <a class="btn btn-secondary btn-sm" href="{{ url_for('admin.student_edit', student_id=student.id) }}"
+                 title="Edit {{ student.nama }}">
+                {{ icon('edit', 16) }}<span class="hide-sm">Edit</span>
+              </a>
+              <form method="post" action="{{ url_for('admin.student_delete', student_id=student.id) }}" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-danger btn-sm"
+                        data-confirm="Hapus data {{ student.nama }}? Riwayat absensinya juga akan terhapus dan tidak bisa dikembalikan.">
+                  {{ icon('trash', 16) }}<span class="hide-sm">Hapus</span>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="table-footer">
+    <span class="muted">Halaman {{ pagination.page }} dari {{ pagination.pages }}</span>
+    {{ pagination_nav(pagination) }}
+  </div>
+  {% else %}
+    {% if q or selected_class_id %}
+      {{ empty_state(
+          'Siswa tidak ditemukan',
+          'Coba kata kunci lain atau ubah filter kelas.',
+          'search',
+          url_for('admin.students'),
+          'Tampilkan Semua'
+      ) }}
+    {% else %}
+      {{ empty_state(
+          'Belum ada data siswa',
+          'Tambahkan siswa satu per satu atau impor dari file Excel/CSV.',
+          'users',
+          url_for('admin.student_add'),
+          'Tambah Siswa'
+      ) }}
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

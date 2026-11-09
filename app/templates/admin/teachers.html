@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% from "_macros.html" import status_badge, empty_state %}
+{% block title %}Data Guru{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="eyebrow">Manajemen Data</p>
+    <h1>Data Guru</h1>
+    <p class="page-sub">Buat akun guru, atur status, dan lihat kelas yang diampu.</p>
+  </div>
+  <a class="btn btn-secondary" href="{{ url_for('admin.classes') }}">{{ icon('book', 18) }} Kelola Kelas</a>
+</div>
+
+<div class="split-layout">
+  <div class="card card-flush">
+    {% if teacher_rows %}
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nama Guru</th>
+            <th>Username</th>
+            <th>Kelas Diampu</th>
+            <th>Status</th>
+            <th class="th-actions">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in teacher_rows %}
+          <tr>
+            <td>
+              <div class="person-cell">
+                <span class="activity-avatar">{{ row.teacher.nama[:1] }}</span>
+                <span class="cell-main">{{ row.teacher.nama }}</span>
+              </div>
+            </td>
+            <td class="mono">@{{ row.teacher.username }}</td>
+            <td>
+              {% if row.classes %}
+              <div class="chip-row">
+                {% for class in row.classes %}
+                <span class="class-pill">{{ class.nama_kelas }}</span>
+                {% endfor %}
+              </div>
+              {% else %}
+              <span class="muted">Belum ada kelas</span>
+              {% endif %}
+            </td>
+            <td>{{ status_badge('Aktif' if row.teacher.aktif else 'Nonaktif') }}</td>
+            <td>
+              <div class="table-actions">
+                <a class="btn btn-secondary btn-sm" href="{{ url_for('admin.teacher_edit', user_id=row.teacher.id) }}">
+                  {{ icon('edit', 16) }}<span class="hide-sm">Edit</span>
+                </a>
+                <form method="post" action="{{ url_for('admin.teacher_delete', user_id=row.teacher.id) }}" class="inline-form">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="btn btn-danger btn-sm"
+                          data-confirm="Hapus akun guru {{ row.teacher.nama }}? Akun yang masih terhubung dengan kelas atau riwayat absensi tidak dapat dihapus.">
+                    {{ icon('trash', 16) }}<span class="hide-sm">Hapus</span>
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+      {{ empty_state(
+          'Belum ada akun guru',
+          'Buat akun guru melalui formulir di samping, lalu tugaskan ke kelas.',
+          'user'
+      ) }}
+    {% endif %}
+  </div>
+
+  <aside class="card side-card">
+    <div class="card-head">
+      <div>
+        <h2>Tambah Akun Guru</h2>
+        <p class="muted">Akun ini dipakai guru untuk masuk.</p>
+      </div>
+    </div>
+    <form method="post" class="stack-lg" data-loading>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="field">
+        <label for="nama">Nama guru</label>
+        <input type="text" id="nama" name="nama" maxlength="100"
+               placeholder="Contoh: Bu Sari" required>
+      </div>
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" maxlength="50"
+               placeholder="Contoh: guru1" autocomplete="off" required>
+        <p class="form-help">Tanpa spasi. Dipakai untuk masuk.</p>
+      </div>
+      <div class="field">
+        <label for="password">Password awal</label>
+        <input type="password" id="password" name="password" minlength="6"
+               placeholder="Minimal 6 karakter" autocomplete="new-password" required>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">{{ icon('plus', 18) }} Buat Akun Guru</button>
+    </form>
+    <p class="form-help">Sampaikan username dan password kepada guru. Password bisa diganti sendiri setelah masuk.</p>
+  </aside>
+</div>
+{% endblock %}
