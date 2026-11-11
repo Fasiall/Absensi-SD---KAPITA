@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0D47A1,100:81D4FA&height=200&section=header&text=Absensi%20Siswa%20&%20Siswi&fontSize=34&fontColor=ffffff&fontAlignY=38&desc=KAPITA%20SELEKTA%20%7C%20Institut%20Teknologi%20Sumatera&descAlignY=55&descAlign=50&animation=twinkling" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0D47A1,100:81D4FA&height=200&section=header&text=Absensi%20Siswa%20&%20Siswi&fontSize=34&fontColor=ffffff&fontAlignY=38&desc=Kapita%20Selekta%20%7C%20Institut%20Teknologi%20Sumatera&descAlignY=55&descAlign=50&animation=twinkling" width="100%" />
 
   <br/>
 
