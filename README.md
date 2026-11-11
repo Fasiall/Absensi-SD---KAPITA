@@ -1,6 +1,6 @@
-# Absensi QR Siswa SD
+# Prototype Absensi QR Siswa SD
 
-Aplikasi web absensi siswa sekolah dasar berbasis **Flask + SQLite**. Guru memindai kartu QR siswa langsung dari kamera HP, kehadiran tercatat otomatis, lalu admin atau guru dapat melihat rekap dan mengunduh laporan Excel.
+Prototype Aplikasi web absensi siswa sekolah dasar berbasis **Flask + SQLite**. Guru memindai kartu QR siswa langsung dari kamera HP, kehadiran tercatat otomatis, lalu admin atau guru dapat melihat rekap dan mengunduh laporan Excel.
 
 Dirancang mobile-first, ringan, mudah dipakai, dan bisa dijalankan di komputer sekolah maupun hosting sederhana.
 
