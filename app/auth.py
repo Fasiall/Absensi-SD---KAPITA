@@ -14,15 +14,22 @@ def login():
         return redirect(_home_for(current_user))
 
     next_url = request.args.get("next", "")
+    errors = {}
+    username = ""
     if request.method == "POST":
-        username = request.form.get("username", "").strip().lower()
+        username = request.form.get("username", "").strip()
+        username_clean = username.lower()
         password = request.form.get("password", "")
         remember = bool(request.form.get("remember"))
         next_url = request.form.get("next", next_url)
 
-        user = User.query.filter(db.func.lower(User.username) == username).first()
-        if not user or not user.check_password(password):
-            flash("Username atau password salah. Silakan coba lagi.", "danger")
+        user = User.query.filter(db.func.lower(User.username) == username_clean).first() if username_clean else None
+        if not username_clean:
+            errors["username"] = "Username tidak ditemukan."
+        elif not user:
+            errors["username"] = "Username tidak ditemukan."
+        elif not password or not user.check_password(password):
+            errors["password"] = "Password yang dimasukkan salah."
         elif not user.aktif:
             flash("Akun ini sedang dinonaktifkan. Hubungi admin sekolah.", "warning")
         else:
@@ -33,7 +40,7 @@ def login():
                 return redirect(next_url)
             return redirect(_home_for(user))
 
-    return render_template("auth/login.html", next_url=next_url)
+    return render_template("auth/login.html", next_url=next_url, errors=errors, username=username)
 
 
 @bp.post("/logout")

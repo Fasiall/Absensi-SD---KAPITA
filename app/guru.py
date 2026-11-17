@@ -296,7 +296,7 @@ def reports_export():
         selected_classes,
         start,
         end,
-        current_app.config.get("SCHOOL_NAME", "SD KAPITA"),
+        current_app.config.get("SCHOOL_NAME", "SD Negeri Purwodadi Simpang"),
         current_user.nama,
         detail_rows,
     )

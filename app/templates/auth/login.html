@@ -5,48 +5,50 @@
 
 {% block content %}
 <div class="auth-wrap">
-  <section class="auth-hero">
-    <span class="hero-badge">{{ icon('qr', 30) }}</span>
-    <p class="hero-eyebrow">{{ school_name }}</p>
-    <h1>Absensi QR<br>Siswa SD</h1>
-    <p class="hero-text">
-      Cukup pindai kartu QR siswa, kehadiran langsung tercatat rapi.
-      Praktis dipakai guru lewat HP.
-    </p>
-    <ul class="hero-points">
-      <li>{{ icon('check', 18) }} Scan kartu dengan kamera HP</li>
-      <li>{{ icon('check', 18) }} Rekap otomatis dan siap diekspor</li>
-      <li>{{ icon('check', 18) }} Data aman, hanya untuk sekolah</li>
-    </ul>
-    <div class="hero-deco hero-deco-one"></div>
-    <div class="hero-deco hero-deco-two"></div>
-  </section>
-
   <section class="auth-card card card-lg">
     <div class="auth-brand">
-      <span class="brand-mark">{{ icon('qr', 22) }}</span>
-      <div>
-        <strong>{{ app_name }}</strong>
-        <span>{{ school_name }}</span>
+      <span class="brand-mark" aria-hidden="true">{{ icon('qr', 24) }}</span>
+      <div class="auth-brand-text">
+        <strong class="auth-brand-title">{{ app_name }}</strong>
+        <span class="auth-brand-school">{{ school_name }}</span>
       </div>
     </div>
     <h2>Masuk ke Aplikasi</h2>
     <p class="muted">Gunakan akun admin atau guru yang diberikan oleh sekolah.</p>
 
-    <form method="post" class="stack-lg" data-loading>
+    <form method="post" class="stack-lg" data-loading id="loginForm">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <input type="hidden" name="next" value="{{ next_url }}">
 
-      <div class="field">
+      <div class="field{% if errors and errors.username %} has-error{% endif %}">
         <label for="username">Username</label>
         <input type="text" id="username" name="username" autocomplete="username"
-               placeholder="Contoh: guru1" required autofocus>
+               value="{{ username|default('') }}"
+               placeholder="Contoh: guru1" required
+               class="{% if errors and errors.username %}is-invalid{% endif %}"
+               {% if not username or (errors and errors.username) %}autofocus{% endif %}>
+        {% if errors and errors.username %}
+        <span class="field-error" id="username-error" role="alert">{{ errors.username }}</span>
+        {% endif %}
       </div>
 
-      <div class="field">
+      <div class="field{% if errors and errors.password %} has-error{% endif %}">
         <label for="password">Password</label>
-        <input type="password" id="password" name="password" autocomplete="current-password"
-               placeholder="Masukkan password" required>
+        <div class="password-input-wrap">
+          <input type="password" id="password" name="password" autocomplete="current-password"
+                 placeholder="Masukkan password" required
+                 class="input-password{% if errors and errors.password %} is-invalid{% endif %}"
+                 {% if username and errors and errors.password %}autofocus{% endif %}>
+          <button type="button" class="btn-toggle-password" id="togglePassword"
+                  data-toggle-password="password"
+                  aria-label="Tampilkan password" title="Tampilkan password" tabindex="0">
+            <span class="eye-icon eye-show" aria-hidden="true">{{ icon('eye', 19) }}</span>
+            <span class="eye-icon eye-hide" aria-hidden="true" style="display: none;">{{ icon('eye-off', 19) }}</span>
+          </button>
+        </div>
+        {% if errors and errors.password %}
+        <span class="field-error" id="password-error" role="alert">{{ errors.password }}</span>
+        {% endif %}
       </div>
 
       <label class="checkbox">

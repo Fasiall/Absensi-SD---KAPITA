@@ -25,5 +25,5 @@ class Config:
     PERMANENT_SESSION_LIFETIME = timedelta(hours=12)
     WTF_CSRF_TIME_LIMIT = None
 
-    SCHOOL_NAME = os.environ.get("SCHOOL_NAME", "SD KAPITA")
+    SCHOOL_NAME = os.environ.get("SCHOOL_NAME", "SD Negeri Purwodadi Simpang")
     APP_TIMEZONE = os.environ.get("APP_TIMEZONE", "Asia/Jakarta")

@@ -87,6 +87,54 @@
     });
   });
 
+  // Show/Hide password toggle
+  document.querySelectorAll("[data-toggle-password]").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      const targetId = btn.getAttribute("data-toggle-password") || "password";
+      const input = document.getElementById(targetId);
+      if (!input) return;
+
+      const isPassword = input.type === "password";
+      input.type = isPassword ? "text" : "password";
+
+      const eyeShow = btn.querySelector(".eye-show");
+      const eyeHide = btn.querySelector(".eye-hide");
+      if (eyeShow && eyeHide) {
+        eyeShow.style.display = isPassword ? "none" : "inline-flex";
+        eyeHide.style.display = isPassword ? "inline-flex" : "none";
+      }
+
+      const label = isPassword ? "Sembunyikan password" : "Tampilkan password";
+      btn.setAttribute("aria-label", label);
+      btn.setAttribute("title", label);
+      input.focus();
+    });
+  });
+
+  // Clear field error on input/modification
+  ["input", "change"].forEach(function (eventType) {
+    document.querySelectorAll(".field input, .field select, .field textarea").forEach(function (input) {
+      input.addEventListener(eventType, function () {
+        if (input.classList.contains("is-invalid")) {
+          input.classList.remove("is-invalid");
+        }
+        const field = input.closest(".field");
+        if (field) {
+          field.classList.remove("has-error");
+          const errorMsg = field.querySelector(".field-error");
+          if (errorMsg) {
+            errorMsg.style.display = "none";
+          }
+        }
+        const flashDanger = document.querySelector(".flash-danger");
+        if (flashDanger) {
+          flashDanger.style.display = "none";
+        }
+      });
+    });
+  });
+
   if (
     "serviceWorker" in navigator &&
     (window.location.protocol === "https:" || window.location.hostname === "localhost")

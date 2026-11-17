@@ -66,7 +66,7 @@ def create_app(test_config=None):
             return url_for(request.endpoint or "auth.login", **args)
 
         return {
-            "school_name": app.config.get("SCHOOL_NAME", "SD KAPITA"),
+            "school_name": app.config.get("SCHOOL_NAME", "SD Negeri Purwodadi Simpang"),
             "app_name": "Absensi QR Siswa",
             "today": today_local(),
             "now": now_local(),
