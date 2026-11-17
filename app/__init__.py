@@ -20,7 +20,11 @@ def create_app(test_config=None):
     if test_config:
         app.config.update(test_config)
 
-    Path(app.root_path).parent.joinpath("instance").mkdir(parents=True, exist_ok=True)
+    # Buat direktori instance jika didukung (abaikan jika filesystem read-only seperti di Vercel)
+    try:
+        Path(app.root_path).parent.joinpath("instance").mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
 
     db.init_app(app)
     login_manager.init_app(app)
@@ -129,7 +133,10 @@ def create_app(test_config=None):
         db.session.rollback()
         return render_template("errors/500.html"), 500
 
-    with app.app_context():
-        db.create_all()
+    try:
+        with app.app_context():
+            db.create_all()
+    except Exception as e:
+        app.logger.warning(f"db.create_all() lewati pada inisialisasi: {e}")
 
     return app

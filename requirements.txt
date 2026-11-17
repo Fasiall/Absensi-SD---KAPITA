@@ -9,7 +9,8 @@ python-dotenv==1.2.4
 qrcode==8.2
 SQLAlchemy==2.1.8
 psycopg2-binary>=2.9.9
-psycopg[binary]>=3.2.0
+psycopg-binary>=3.2.0
+psycopg>=3.2.0
 tzdata==2026.6
 Werkzeug==3.1.9
 WTForms==3.3.2

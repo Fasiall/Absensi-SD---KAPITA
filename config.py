@@ -8,11 +8,26 @@ BASE_DIR = Path(__file__).resolve().parent
 class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key-ganti-saat-produksi")
 
-    _database_url = os.environ.get(
-        "DATABASE_URL", f"sqlite:///{(BASE_DIR / 'instance' / 'absensi.db').as_posix()}"
+    _default_sqlite = (
+        "sqlite:////tmp/absensi.db"
+        if os.environ.get("VERCEL")
+        else f"sqlite:///{(BASE_DIR / 'instance' / 'absensi.db').as_posix()}"
     )
+    _database_url = os.environ.get("DATABASE_URL", _default_sqlite).strip()
+
     if _database_url.startswith("postgres://"):
         _database_url = _database_url.replace("postgres://", "postgresql://", 1)
+
+    # Sesuaikan driver PostgreSQL jika belum ditentukan
+    if _database_url.startswith("postgresql://") and not (
+        "+psycopg" in _database_url or "+psycopg2" in _database_url
+    ):
+        try:
+            import psycopg  # noqa: F401
+            _database_url = _database_url.replace("postgresql://", "postgresql+psycopg://", 1)
+        except ImportError:
+            _database_url = _database_url.replace("postgresql://", "postgresql+psycopg2://", 1)
+
     SQLALCHEMY_DATABASE_URI = _database_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
