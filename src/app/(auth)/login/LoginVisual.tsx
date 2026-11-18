@@ -3,9 +3,13 @@ import type { CSSProperties } from "react";
 /**
  * Panel ilustrasi halaman login.
  *
- * Tepi kanan panel (batas dengan panel form krem) melebur ke #F6F3F3 lewat
- * gradient overlay, sehingga tidak ada lagi garis vertikal keras di tengah
- * layar. Tepi atas/bawah tetap memakai mask agar gambar larut ke biru panel.
+ * Tidak ada lagi latar biru di panel ini — latarnya krem (#F6F3F3) sehingga
+ * gambar melebur langsung ke panel form di sebelahnya. Mask dipasang di tiga
+ * sisi (atas, kanan, bawah) dengan kurva landai supaya seluruh batas gambar
+ * larut tanpa garis tepi yang kaku.
+ *
+ * Catatan: tiap gradient harus #000 penuh di dua sisi lainnya, kalau tidak
+ * area yang seharusnya utuh ikut terpotong dan muncul garis batas.
  */
 const MASK_IMAGE = [
   // tepi atas: transparan -> penuh
@@ -15,6 +19,14 @@ const MASK_IMAGE = [
     rgba(0,0,0,0.28) 13%,
     rgba(0,0,0,0.62) 22%,
     #000 34%)`,
+
+  // tepi kanan: penuh -> transparan (melebur ke panel form)
+  `linear-gradient(to left,
+    transparent 0%,
+    rgba(0,0,0,0.08) 7%,
+    rgba(0,0,0,0.28) 16%,
+    rgba(0,0,0,0.62) 26%,
+    #000 40%)`,
 
   // tepi bawah: transparan -> penuh
   `linear-gradient(to top,
@@ -36,8 +48,7 @@ const maskStyle: CSSProperties = {
 
 export default function LoginVisual() {
   return (
-    <section className="relative hidden overflow-hidden bg-[#16B0F6] lg:block">
-      {/* Gambar: memudar di tepi atas & bawah */}
+    <section className="relative hidden overflow-hidden bg-[#F6F3F3] lg:block">
       <div className="absolute inset-0" style={maskStyle} aria-hidden="true">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
