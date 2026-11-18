@@ -1,4 +1,4 @@
-# Absensi Siswa & Siswi — SD KAPITA
+# Absensi Siswa & Siswi — SD Negeri Purwodadi Simpang
 
 Aplikasi absensi sekolah berbasis QR code. Guru memindai kartu QR siswa, sistem
 mencatat kehadiran harian, dan admin/kepala sekolah dapat menarik rekap dalam
@@ -64,7 +64,7 @@ Buat `.env.local` di root:
 ```env
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:6543/postgres?pgbouncer=true"
 SECRET_KEY="string-acak-panjang-untuk-menandatangani-sesi"
-SCHOOL_NAME="SD KAPITA"
+SCHOOL_NAME="SD Negeri Purwodadi Simpang"
 APP_TIMEZONE="Asia/Jakarta"
 ```
 

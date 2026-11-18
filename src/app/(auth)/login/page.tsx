@@ -20,7 +20,7 @@ export default async function LoginPage({
   if (user) redirect(homeFor(user));
 
   const next = typeof params.next === "string" && isSafeUrl(params.next) ? params.next : "";
-  const schoolName = process.env.SCHOOL_NAME || "SD KAPITA";
+  const schoolName = process.env.SCHOOL_NAME || "SD Negeri Purwodadi Simpang";
   const errorMessage = params.error === "1" ? "Nama pengguna atau kata sandi salah." : "";
 
   return (

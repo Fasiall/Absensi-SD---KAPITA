@@ -32,7 +32,7 @@ export default async function AdminDashboard() {
       nav={navFor(user)}
       current="/admin"
       title="Dashboard"
-      subtitle={`Ringkasan absensi ${process.env.SCHOOL_NAME || "SD KAPITA"}`}
+      subtitle={`Ringkasan absensi ${process.env.SCHOOL_NAME || "SD Negeri Purwodadi Simpang"}`}
     >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (

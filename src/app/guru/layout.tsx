@@ -16,7 +16,7 @@ export default async function GuruLayout({ children }: { children: ReactNode }) 
       nav={navFor(user)}
       current={pathname}
       title="Absensi Guru"
-      subtitle={process.env.SCHOOL_NAME || "SD KAPITA"}
+      subtitle={process.env.SCHOOL_NAME || "SD Negeri Purwodadi Simpang"}
     >
       {children}
     </AppShell>

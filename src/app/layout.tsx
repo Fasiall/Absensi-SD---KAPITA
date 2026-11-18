@@ -23,7 +23,7 @@ const sekuya = Sekuya({
   display: "swap",
 });
 
-const schoolName = process.env.SCHOOL_NAME || "SD KAPITA";
+const schoolName = process.env.SCHOOL_NAME || "SD Negeri Purwodadi Simpang";
 
 // Semua halaman butuh cookie sesi / kueri Prisma, jadi tidak boleh diprerender.
 // Tanpa ini Next 16 memunculkan peringatan "runtime data during prerendering".

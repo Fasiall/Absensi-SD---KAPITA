@@ -41,7 +41,7 @@ export async function GET(request: Request) {
     selectedClasses,
     period.start,
     period.end,
-    process.env.SCHOOL_NAME ?? "SD KAPITA",
+    process.env.SCHOOL_NAME ?? "SD Negeri Purwodadi Simpang",
     user?.nama ?? "Administrator",
     detail as unknown as DetailRecord[],
   );

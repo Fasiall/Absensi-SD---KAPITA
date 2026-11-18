@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 /** Manifest PWA versi Next.js (menggantikan /static/manifest.json milik Flask). */
 export function GET() {
-  const schoolName = process.env.SCHOOL_NAME ?? "SD KAPITA";
+  const schoolName = process.env.SCHOOL_NAME ?? "SD Negeri Purwodadi Simpang";
 
   const manifest = {
     name: `Absensi ${schoolName}`,

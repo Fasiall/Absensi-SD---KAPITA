@@ -48,7 +48,7 @@ export default async function KartuPage({
 
   const studentId = Number.parseInt(params.student_id ?? "", 10);
   const classId = Number.parseInt(params.class_id ?? "", 10);
-  const schoolName = process.env.SCHOOL_NAME ?? "SD KAPITA";
+  const schoolName = process.env.SCHOOL_NAME ?? "SD Negeri Purwodadi Simpang";
 
   let students: Awaited<ReturnType<typeof prisma.student.findMany<{ include: { schoolClass: true } }>>>;
   let title: string;
