@@ -6,7 +6,12 @@ BASE_DIR = Path(__file__).resolve().parent
 
 
 class Config:
-    SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-key-ganti-saat-produksi")
+    _DEFAULT_SECRET = "dev-secret-key-ganti-saat-produksi"
+    SECRET_KEY = os.environ.get("SECRET_KEY", _DEFAULT_SECRET)
+
+    # Set 1/0 untuk memaksa pembuatan tabel otomatis. Default: aktif hanya
+    # untuk SQLite lokal, nonaktif di Vercel/Postgres.
+    AUTO_CREATE_SCHEMA = os.environ.get("AUTO_CREATE_SCHEMA")
 
     _default_sqlite = (
         "sqlite:////tmp/absensi.db"
