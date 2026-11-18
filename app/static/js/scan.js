@@ -27,6 +27,8 @@
   const cameraStart = document.getElementById("camera-start");
   const cameraToggle = document.getElementById("camera-toggle");
   const cameraToggleText = document.getElementById("camera-toggle-text");
+  const cameraFlip = document.getElementById("camera-flip");
+  const cameraFlipText = document.getElementById("camera-flip-text");
   const cameraStatus = document.getElementById("camera-status");
   const offlineBanner = document.getElementById("offline-banner");
   const pendingText = document.getElementById("pending-text");
@@ -49,6 +51,13 @@
   let currentStudentId = null;
   let audioContext = null;
   let flashTimer = null;
+
+  // Kamera: mulai dari belakang (paling praktis untuk memindai kartu).
+  const CAMERA_MODES = [
+    { facingMode: "environment", label: "Kamera Belakang" },
+    { facingMode: "user", label: "Kamera Depan" },
+  ];
+  let cameraModeIndex = 0;
 
   const FLASH_ICONS = {
     success:
@@ -594,7 +603,7 @@
 
     try {
       await scanner.start(
-        { facingMode: "environment" },
+        { facingMode: CAMERA_MODES[cameraModeIndex].facingMode },
         {
           fps: 10,
           qrbox: { width: 240, height: 240 },
@@ -614,6 +623,14 @@
       if (cameraToggleText) {
         cameraToggleText.textContent = "Matikan Kamera";
       }
+      if (cameraFlip) {
+        // Selalu izinkan percobaan ganti kamera: sebagian browser tidak
+        // melaporkan jumlah kamera sebelum izin benar-benar diberikan.
+        cameraFlip.disabled = false;
+      }
+      if (cameraFlipText) {
+        cameraFlipText.textContent = CAMERA_MODES[cameraModeIndex].label;
+      }
       if (cameraStart) {
         cameraStart.disabled = false;
       }
@@ -627,12 +644,38 @@
       if (cameraToggle) {
         cameraToggle.disabled = true;
       }
+      if (cameraFlip) {
+        cameraFlip.disabled = true;
+      }
     } finally {
       isStarting = false;
     }
   }
 
-  async function stopCamera() {
+  async function flipCamera() {
+    if (isStarting) {
+      return;
+    }
+    const previousIndex = cameraModeIndex;
+    cameraModeIndex = (cameraModeIndex + 1) % CAMERA_MODES.length;
+    if (isScanning) {
+      await stopCamera(true);
+    }
+    if (!isScanning) {
+      // startCamera() menandai isScanning=true saat berhasil.
+      await startCamera();
+    }
+    if (!isScanning) {
+      // Kamera tujuan tidak tersedia: kembali ke kamera sebelumnya bila bisa.
+      cameraModeIndex = previousIndex;
+      await startCamera();
+    }
+    if (cameraFlipText) {
+      cameraFlipText.textContent = CAMERA_MODES[cameraModeIndex].label;
+    }
+  }
+
+  async function stopCamera(keepStatus) {
     if (!scanner) {
       return;
     }
@@ -654,10 +697,12 @@
     if (readerEl) {
       readerEl.innerHTML = "";
     }
-    setCameraStatus("Kamera mati", "off");
-    showOverlay("Kamera dimatikan. Tekan Nyalakan Kamera untuk memindai lagi.");
-    if (cameraToggleText) {
-      cameraToggleText.textContent = "Nyalakan Kamera";
+    if (!keepStatus) {
+      setCameraStatus("Kamera mati", "off");
+      showOverlay("Kamera dimatikan. Tekan Nyalakan Kamera untuk memindai lagi.");
+      if (cameraToggleText) {
+        cameraToggleText.textContent = "Nyalakan Kamera";
+      }
     }
     if (cameraToggle) {
       cameraToggle.disabled = false;
@@ -679,6 +724,10 @@
         startCamera();
       }
     });
+  }
+
+  if (cameraFlip) {
+    cameraFlip.addEventListener("click", flipCamera);
   }
 
   function openStatusDialog(button) {
