@@ -32,14 +32,14 @@ export default async function LoginPage({
 
       <section className="flex items-center justify-center bg-[#F6F3F3] px-5 py-10 sm:px-10">
         <div className="w-full max-w-[420px]">
-          <div className="mb-8 flex items-center gap-2 lg:hidden">
+          <div className="mb-8 flex items-center justify-center gap-2 lg:hidden">
             <span className="text-sm font-semibold tracking-wide">{schoolName}</span>
           </div>
 
-          <h2 className="font-[family-name:var(--font-display)] text-[56px] leading-none font-black uppercase tracking-tight text-[#1E88C7] drop-shadow-[0_2px_0_rgba(30,136,199,0.22)] sm:text-[68px]">
-            Masuk
+          <h2 className="text-center font-[family-name:var(--font-display)] text-[56px] leading-none font-black uppercase tracking-tight text-[#1E88C7] drop-shadow-[0_2px_0_rgba(30,136,199,0.22)] sm:text-[68px]">
+            Login
           </h2>
-          <p className="mt-3 text-sm text-[#6B6B6B]">
+          <p className="mt-3 text-center text-sm text-[#6B6B6B]">
             Selamat datang kembali di aplikasi absensi {schoolName}.
           </p>
 

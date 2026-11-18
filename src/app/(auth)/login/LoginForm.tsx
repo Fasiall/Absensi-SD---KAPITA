@@ -87,7 +87,7 @@ export function LoginForm({ action, defaultUsername = "", error, next }: Props) 
         type="submit"
         className="mt-1 h-12 rounded-[40px] bg-[#1E88C7] text-sm font-semibold uppercase tracking-[0.14em] text-white transition hover:bg-[#1976AF] active:scale-[0.99]"
       >
-        Masuk
+        Login
       </button>
 
       <p className="text-center text-xs text-muted">
