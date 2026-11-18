@@ -73,7 +73,11 @@ export function LoginForm({ action, defaultUsername = "", error, next }: Props) 
         </span>
       </label>
 
-      <label className="flex items-center gap-2 text-sm text-muted">
+      {/* Kotak centang digeser 17px ke kanan supaya titik tengahnya sejajar
+          dengan ikon gembok di kolom kata sandi (ikon ada di left-4 = 16px,
+          plus setengah lebarnya 9px = 25px; kotak centang 16px wide dimulai
+          dari 9px agar pusatnya juga 25px). */}
+      <label className="flex items-center gap-2 pl-[17px] text-sm text-muted">
         <input
           type="checkbox"
           name="remember"
