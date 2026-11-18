@@ -1,41 +1,20 @@
 export default function LoginVisual() {
   return (
     <section className="relative hidden overflow-hidden bg-[#16B0F6] lg:flex lg:flex-col">
-      <div
-        className="pointer-events-none absolute -left-24 -top-24 size-[420px] rounded-full bg-[#3FC0FA] opacity-70 blur-[2px]"
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/login.jpg"
+        alt=""
         aria-hidden="true"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
       />
       <div
-        className="pointer-events-none absolute -bottom-32 -right-24 size-[460px] rounded-full bg-[#0E9BDD] opacity-80"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0B6E9B]/85 via-[#16B0F6]/35 to-[#16B0F6]/10"
         aria-hidden="true"
       />
 
-      <div className="relative z-10 flex flex-1 flex-col justify-center px-14 py-12">
-        <div className="relative mx-auto w-full max-w-[420px]">
-          <div
-            className="absolute -left-6 -top-6 h-28 w-28 rotate-[-12deg] rounded-[26px] bg-white/90 shadow-[0_18px_40px_rgba(8,60,90,0.18)]"
-            aria-hidden="true"
-          />
-          <div
-            className="absolute -bottom-8 -right-4 h-24 w-24 rotate-[14deg] rounded-[22px] bg-[#E099B7] shadow-[0_18px_40px_rgba(8,60,90,0.18)]"
-            aria-hidden="true"
-          />
-
-          <div className="relative overflow-hidden rounded-[36px] border-[10px] border-white/25 shadow-[0_24px_60px_rgba(8,60,90,0.22)]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/login.jpg"
-              alt="Ilustrasi absensi siswa"
-              className="h-[340px] w-full object-cover"
-            />
-            <div
-              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0E9BDD]/50 via-transparent to-transparent"
-              aria-hidden="true"
-            />
-          </div>
-        </div>
-
-        <div className="mt-12 text-white">
+      <div className="relative z-10 flex flex-1 flex-col justify-end px-14 py-12">
+        <div className="text-white">
           <p className="font-[family-name:var(--font-tagline)] text-xs uppercase tracking-[0.42em] text-white/85">
             your character, your hero!!
           </p>
