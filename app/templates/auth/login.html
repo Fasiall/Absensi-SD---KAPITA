@@ -1,70 +1,103 @@
 {% extends "base.html" %}
 {% from "_icons.html" import icon %}
 {% block title %}Masuk{% endblock %}
-{% block body_class %}auth-body{% endblock %}
+{% block body_class %}auth-body auth-body-split{% endblock %}
+
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Russo+One&family=Sekuya&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap">
+{% endblock %}
 
 {% block content %}
-<div class="auth-wrap">
-  <section class="auth-card card card-lg">
-    <div class="auth-brand">
-      <span class="brand-mark" aria-hidden="true">{{ icon('qr', 24) }}</span>
-      <div class="auth-brand-text">
-        <strong class="auth-brand-title">{{ app_name }}</strong>
-        <span class="auth-brand-school">{{ school_name }}</span>
-      </div>
+<div class="login-shell">
+
+  {# ---------- Panel kiri: visual ---------- #}
+  <section class="login-visual" aria-hidden="true">
+    <div class="login-visual-glow"></div>
+    <div class="login-visual-art">
+      <span class="login-visual-card login-visual-card-1"></span>
+      <span class="login-visual-card login-visual-card-2"></span>
+      <span class="login-visual-ring"></span>
+      {{ icon('qr', 132) }}
     </div>
-    <h2>Masuk ke Aplikasi</h2>
-    <p class="muted">Gunakan akun admin atau guru yang diberikan oleh sekolah.</p>
-
-    <form method="post" class="stack-lg" data-loading id="loginForm">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-      <input type="hidden" name="next" value="{{ next_url }}">
-
-      <div class="field{% if errors and errors.username %} has-error{% endif %}">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" autocomplete="username"
-               value="{{ username|default('') }}"
-               placeholder="Contoh: guru1" required
-               class="{% if errors and errors.username %}is-invalid{% endif %}"
-               {% if not username or (errors and errors.username) %}autofocus{% endif %}>
-        {% if errors and errors.username %}
-        <span class="field-error" id="username-error" role="alert">{{ errors.username }}</span>
-        {% endif %}
-      </div>
-
-      <div class="field{% if errors and errors.password %} has-error{% endif %}">
-        <label for="password">Password</label>
-        <div class="password-input-wrap">
-          <input type="password" id="password" name="password" autocomplete="current-password"
-                 placeholder="Masukkan password" required
-                 class="input-password{% if errors and errors.password %} is-invalid{% endif %}"
-                 {% if username and errors and errors.password %}autofocus{% endif %}>
-          <button type="button" class="btn-toggle-password" id="togglePassword"
-                  data-toggle-password="password"
-                  aria-label="Tampilkan password" title="Tampilkan password" tabindex="0">
-            <span class="eye-icon eye-show" aria-hidden="true">{{ icon('eye', 19) }}</span>
-            <span class="eye-icon eye-hide" aria-hidden="true" style="display: none;">{{ icon('eye-off', 19) }}</span>
-          </button>
-        </div>
-        {% if errors and errors.password %}
-        <span class="field-error" id="password-error" role="alert">{{ errors.password }}</span>
-        {% endif %}
-      </div>
-
-      <label class="checkbox">
-        <input type="checkbox" name="remember" value="1">
-        <span>Ingat saya di perangkat ini</span>
-      </label>
-
-      <button type="submit" class="btn btn-primary btn-block">
-        {{ icon('login', 20) }} Masuk
-      </button>
-    </form>
-
-    <p class="auth-hint">
-      {{ icon('info', 16) }}
-      Belum bisa masuk? Hubungi admin sekolah untuk mendapatkan akun.
-    </p>
+    <div class="login-visual-text">
+      <p class="login-visual-tagline">your character, your hero!!</p>
+      <h1 class="login-visual-title">Art Design</h1>
+      <p class="login-visual-sub">{{ school_name }} &middot; {{ app_name }}</p>
+    </div>
   </section>
+
+  {# ---------- Panel kanan: form ---------- #}
+  <section class="login-panel">
+    <div class="login-panel-inner">
+
+      <div class="login-heading">
+        <span class="login-brand-mark">{{ icon('qr', 22) }}</span>
+        <p class="login-eyebrow">{{ app_name }}</p>
+        <h2 class="login-title">Login</h2>
+        <p class="login-subtitle">Gunakan akun admin atau guru yang diberikan oleh sekolah.</p>
+      </div>
+
+      <form method="post" class="login-form" data-loading id="loginForm">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="next" value="{{ next_url }}">
+
+        <div class="login-field{% if errors and errors.username %} has-error{% endif %}">
+          <label for="username">Email / Username</label>
+          <div class="login-input-wrap">
+            {{ icon('user', 18) }}
+            <input type="text" id="username" name="username" autocomplete="username"
+                   value="{{ username|default('') }}"
+                   placeholder="Enter ur email"
+                   required
+                   class="{% if errors and errors.username %}is-invalid{% endif %}"
+                   {% if not username or (errors and errors.username) %}autofocus{% endif %}>
+          </div>
+          {% if errors and errors.username %}
+          <span class="field-error" id="username-error" role="alert">{{ errors.username }}</span>
+          {% endif %}
+        </div>
+
+        <div class="login-field{% if errors and errors.password %} has-error{% endif %}">
+          <label for="password">Password</label>
+          <div class="login-input-wrap">
+            {{ icon('key', 18) }}
+            <input type="password" id="password" name="password" autocomplete="current-password"
+                   placeholder="Masukkan password"
+                   required
+                   class="input-password{% if errors and errors.password %} is-invalid{% endif %}"
+                   {% if username and errors and errors.password %}autofocus{% endif %}>
+            <button type="button" class="login-eye" id="togglePassword"
+                    data-toggle-password="password"
+                    aria-label="Tampilkan password" title="Tampilkan password" tabindex="0">
+              <span class="eye-icon eye-show" aria-hidden="true">{{ icon('eye', 18) }}</span>
+              <span class="eye-icon eye-hide" aria-hidden="true" style="display: none;">{{ icon('eye-off', 18) }}</span>
+            </button>
+          </div>
+          {% if errors and errors.password %}
+          <span class="field-error" id="password-error" role="alert">{{ errors.password }}</span>
+          {% endif %}
+        </div>
+
+        <label class="login-remember">
+          <input type="checkbox" name="remember" value="1">
+          <span>Ingat saya di perangkat ini</span>
+        </label>
+
+        <button type="submit" class="login-submit">
+          <span>Sign in</span>
+          {{ icon('login', 20) }}
+        </button>
+      </form>
+
+      <p class="login-hint">
+        {{ icon('info', 15) }}
+        <span>Belum bisa masuk? Hubungi admin sekolah untuk mendapatkan akun.</span>
+      </p>
+    </div>
+  </section>
+
 </div>
 {% endblock %}
