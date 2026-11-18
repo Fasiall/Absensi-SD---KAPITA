@@ -40,7 +40,9 @@ export default async function LoginPage({
             Login
           </h2>
           <p className="mt-3 text-center text-sm text-[#6B6B6B]">
-            Selamat datang kembali di aplikasi absensi {schoolName}.
+            Selamat datang di aplikasi absensi
+            <br />
+            {schoolName}
           </p>
 
           <div className="mt-8">
