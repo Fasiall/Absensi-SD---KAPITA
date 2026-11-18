@@ -1,6 +1,6 @@
 export default function LoginVisual() {
   return (
-    <section className="relative hidden overflow-hidden bg-[#16B0F6] lg:flex lg:flex-col">
+    <section className="relative hidden overflow-hidden bg-[#16B0F6] lg:block">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src="/login.jpg"
@@ -8,25 +8,22 @@ export default function LoginVisual() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 h-full w-full object-cover"
       />
+
+      {/* Gradient fade: menyatukan tepi kanan gambar ke panel login */}
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0B6E9B]/85 via-[#16B0F6]/35 to-[#16B0F6]/10"
+        className="pointer-events-none absolute inset-y-0 right-0 w-[42%] bg-gradient-to-r from-transparent via-[#F6F3F3]/55 to-[#F6F3F3]"
         aria-hidden="true"
       />
 
-      <div className="relative z-10 flex flex-1 flex-col justify-end px-14 py-12">
-        <div className="text-white">
-          <p className="font-[family-name:var(--font-tagline)] text-xs uppercase tracking-[0.42em] text-white/85">
-            your character, your hero!!
-          </p>
-          <h1 className="mt-4 font-[family-name:var(--font-display)] text-[68px] leading-[0.92] text-[#E099B7] drop-shadow-[0_6px_18px_rgba(9,63,92,0.25)]">
-            Art Design
-          </h1>
-          <p className="mt-5 max-w-[340px] text-[15px] leading-relaxed text-white/90">
-            Sistem absensi QR Code untuk sekolah dasar. Cepat, rapi, dan bisa dipakai
-            langsung dari kamera ponsel.
-          </p>
-        </div>
-      </div>
+      {/* Gradient fade: tepi atas dan bawah */}
+      <div
+        className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/25 to-transparent"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/30 to-transparent"
+        aria-hidden="true"
+      />
     </section>
   );
 }
