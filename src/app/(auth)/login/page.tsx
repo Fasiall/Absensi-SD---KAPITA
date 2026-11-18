@@ -27,7 +27,7 @@ export default async function LoginPage({
     <div className="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
       <LoginVisual />
 
-      <section className="flex items-center justify-center bg-[#F6F3F3] px-5 py-10 sm:px-10">
+      <section className="relative flex items-center justify-center bg-[#F6F3F3] px-5 py-10 before:pointer-events-none before:absolute before:inset-y-0 before:left-0 before:w-24 before:bg-gradient-to-r before:from-[#16B0F6] before:to-[#F6F3F3] before:content-[''] sm:px-10">
         <div className="w-full max-w-[420px]">
           <div className="mb-8 flex items-center gap-2 lg:hidden">
             <span className="grid size-10 place-items-center rounded-xl bg-[#16B0F6] text-white">
