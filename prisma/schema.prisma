@@ -1,0 +1,76 @@
+// Schema Prisma — port 1:1 dari app/models.py (Flask-SQLAlchemy)
+// Nama tabel & kolom dipertahankan persis agar bisa memakai database yang sama.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  nama         String    @db.VarChar(100)
+  username     String    @unique @db.VarChar(50)
+  passwordHash String    @map("password_hash") @db.VarChar(255)
+  role         String    @default("guru") @db.VarChar(10)
+  aktif        Boolean   @default(true)
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+
+  classes       SchoolClass[]
+  attendances   Attendance[]  @relation("AttendanceRecorder")
+
+  @@index([username])
+  @@map("users")
+}
+
+model SchoolClass {
+  id        Int    @id @default(autoincrement())
+  namaKelas String @unique @map("nama_kelas") @db.VarChar(20)
+  guruId    Int?   @map("guru_id")
+
+  guru     User?     @relation(fields: [guruId], references: [id])
+  students Student[]
+
+  @@index([namaKelas])
+  @@index([guruId])
+  @@map("classes")
+}
+
+model Student {
+  id        Int      @id @default(autoincrement())
+  nis       String   @unique @db.VarChar(30)
+  nama      String   @db.VarChar(100)
+  classId   Int      @map("class_id")
+  qrCode    String   @unique @map("qr_code") @db.VarChar(40)
+  aktif     Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  schoolClass SchoolClass  @relation(fields: [classId], references: [id], onDelete: Cascade)
+  attendances Attendance[]
+
+  @@index([nis])
+  @@index([classId])
+  @@index([qrCode])
+  @@map("students")
+}
+
+model Attendance {
+  id           Int       @id @default(autoincrement())
+  studentId    Int       @map("student_id")
+  tanggal      DateTime  @db.Date
+  jamMasuk     DateTime? @map("jam_masuk") @db.Time(6)
+  status       String    @default("Hadir") @db.VarChar(10)
+  dicatatOleh  Int?      @map("dicatat_oleh")
+  catatan      String?   @db.VarChar(255)
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  student  Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  pencatat User?   @relation("AttendanceRecorder", fields: [dicatatOleh], references: [id])
+
+  @@unique([studentId, tanggal], name: "uq_attendance_student_date")
+  @@index([studentId])
+  @@index([tanggal])
+  @@map("attendance")
+}
