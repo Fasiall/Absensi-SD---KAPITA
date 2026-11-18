@@ -11,22 +11,27 @@ export default function LoginVisual() {
       />
 
       <div className="relative z-10 flex flex-1 flex-col justify-center px-14 py-12">
-        <div className="relative mx-auto w-full max-w-[380px]">
+        <div className="relative mx-auto w-full max-w-[420px]">
           <div
-            className="absolute -left-6 top-10 h-28 w-28 rotate-[-12deg] rounded-[26px] bg-white/90 shadow-[0_18px_40px_rgba(8,60,90,0.18)]"
+            className="absolute -left-6 -top-6 h-28 w-28 rotate-[-12deg] rounded-[26px] bg-white/90 shadow-[0_18px_40px_rgba(8,60,90,0.18)]"
             aria-hidden="true"
           />
           <div
-            className="absolute -right-2 bottom-6 h-24 w-24 rotate-[14deg] rounded-[22px] bg-[#E099B7] shadow-[0_18px_40px_rgba(8,60,90,0.18)]"
+            className="absolute -bottom-8 -right-4 h-24 w-24 rotate-[14deg] rounded-[22px] bg-[#E099B7] shadow-[0_18px_40px_rgba(8,60,90,0.18)]"
             aria-hidden="true"
           />
 
-          <div className="relative mx-auto grid size-[248px] place-items-center rounded-[44px] border-[10px] border-white/25">
-            <div className="grid size-[196px] place-items-center rounded-[34px] bg-white text-[#16B0F6] shadow-[0_24px_60px_rgba(8,60,90,0.22)]">
-              <svg width="118" height="118" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M3 3h7v7H3V3Zm11 0h7v7h-7V3ZM3 14h7v7H3v-7Zm11 3h3v3h-3v-3Zm4-3h3v3h-3v-3Zm0-3h3v1h-3v-1Zm-4 3h1v3h-1v-3Z" />
-              </svg>
-            </div>
+          <div className="relative overflow-hidden rounded-[36px] border-[10px] border-white/25 shadow-[0_24px_60px_rgba(8,60,90,0.22)]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/login.jpg"
+              alt="Ilustrasi absensi siswa"
+              className="h-[340px] w-full object-cover"
+            />
+            <div
+              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0E9BDD]/50 via-transparent to-transparent"
+              aria-hidden="true"
+            />
           </div>
         </div>
 
