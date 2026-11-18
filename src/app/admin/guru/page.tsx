@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { AppShell } from "@/components/AppShell";
 import { FlashMessages } from "@/components/FlashMessages";
 import { Icon } from "@/components/Icon";
-import { requireAdmin } from "@/lib/guards";
+import { requireAdmin, guardWith } from "@/lib/guards";
 import { navFor } from "@/lib/nav";
 import { prisma } from "@/lib/db";
 import { takeFlash } from "@/lib/flash";
@@ -11,15 +11,18 @@ import { takeFlash } from "@/lib/flash";
 export const metadata: Metadata = { title: "Data Guru" };
 
 export default async function TeachersPage() {
-  const user = await requireAdmin("/admin/guru");
-  const [teachers, flashes] = await Promise.all([
-    prisma.user.findMany({
-      where: { role: "guru" },
-      orderBy: { nama: "asc" },
-      include: { _count: { select: { classes: true } } },
-    }),
-    takeFlash(),
-  ]);
+  const [user, [teachers, flashes]] = await guardWith(
+    requireAdmin("/admin/guru"),
+    () =>
+      Promise.all([
+        prisma.user.findMany({
+          where: { role: "guru" },
+          orderBy: { nama: "asc" },
+          include: { _count: { select: { classes: true } } },
+        }),
+        takeFlash(),
+      ]),
+  );
 
   return (
     <AppShell

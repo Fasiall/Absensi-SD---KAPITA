@@ -61,28 +61,53 @@ export async function buildReports(
   const startDate = new Date(`${period.start}T00:00:00Z`);
   const endDate = new Date(`${period.end}T00:00:00Z`);
 
-  const classes = await prisma.schoolClass.findMany({
-    where: { id: { in: classIds } },
-    orderBy: { namaKelas: "asc" },
-    select: { id: true, namaKelas: true },
-  });
+  // Ambil SEMUA data yang dibutuhkan dalam 2 query paralel, bukan 2 query per
+  // kelas di dalam loop. Database berada di Singapura sehingga tiap roundtrip
+  // berbiaya ~50-60 ms; pola N+1 sebelumnya memakan ~400 ms untuk 6 kelas.
+  const [classes, allStudents, allAttendance] = await Promise.all([
+    prisma.schoolClass.findMany({
+      where: { id: { in: classIds } },
+      orderBy: { namaKelas: "asc" },
+      select: { id: true, namaKelas: true },
+    }),
+    prisma.student.findMany({
+      where: { classId: { in: classIds }, aktif: true },
+      orderBy: { nama: "asc" },
+      select: { id: true, nis: true, nama: true, classId: true },
+    }),
+    prisma.attendance.findMany({
+      where: {
+        student: { classId: { in: classIds } },
+        tanggal: { gte: startDate, lte: endDate },
+      },
+      orderBy: { tanggal: "asc" },
+    }),
+  ]);
+
+  // Kelompokkan hasil di memori supaya tidak perlu query per kelas.
+  const studentsByClass = new Map<number, typeof allStudents>();
+  for (const student of allStudents) {
+    const bucket = studentsByClass.get(student.classId);
+    if (bucket) bucket.push(student);
+    else studentsByClass.set(student.classId, [student]);
+  }
+
+  const attendanceByClass = new Map<number, typeof allAttendance>();
+  const classIdByStudent = new Map<number, number>();
+  for (const student of allStudents) classIdByStudent.set(student.id, student.classId);
+  for (const row of allAttendance) {
+    const classId = classIdByStudent.get(row.studentId);
+    if (classId === undefined) continue;
+    const bucket = attendanceByClass.get(classId);
+    if (bucket) bucket.push(row);
+    else attendanceByClass.set(classId, [row]);
+  }
 
   const reports: ClassReport[] = [];
 
   for (const schoolClass of classes) {
-    const students = await prisma.student.findMany({
-      where: { classId: schoolClass.id, aktif: true },
-      orderBy: { nama: "asc" },
-      select: { id: true, nis: true, nama: true },
-    });
-
-    const rows = await prisma.attendance.findMany({
-      where: {
-        student: { classId: schoolClass.id },
-        tanggal: { gte: startDate, lte: endDate },
-      },
-      orderBy: { tanggal: "asc" },
-    });
+    const students = studentsByClass.get(schoolClass.id) ?? [];
+    const rows = attendanceByClass.get(schoolClass.id) ?? [];
 
     const dates = [...new Set(rows.map((r) => r.tanggal.toISOString().slice(0, 10)))].sort();
 

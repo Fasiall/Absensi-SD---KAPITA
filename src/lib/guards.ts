@@ -51,14 +51,33 @@ export class ForbiddenError extends Error {
  * Pola baru (dua roundtrip berjalan bersamaan):
  *   const [user, data] = await guardWith(requireAdmin("/admin/kelas"), () => prisma...)
  *
- * Latensi total menjadi yang paling lambat, bukan jumlah keduanya — memangkas
- * satu roundtrip penuh per navigasi halaman.
+ * PENTING: `redirect()` dan `notFound()` bekerja dengan melempar error khusus
+ * (digest NEXT_REDIRECT / NEXT_NOT_FOUND). Kalau error itu ikut ter-await oleh
+ * `Promise.all`, Next tidak mengenalinya sebagai sinyal kontrol dan halaman
+ * berakhir sebagai error 500 alih-alih redirect ke /login. Karena itu guard
+ * ditangani terpisah: kegagalan guard selalu menang, dan hanya bila guard sukses
+ * hasil `load()` yang dipakai.
  */
 export async function guardWith<T>(
   guard: Promise<SessionUser>,
   load: () => Promise<T>,
 ): Promise<[SessionUser, T]> {
-  return await Promise.all([guard, load()]);
+  // `load()` sengaja dimulai lebih dulu agar berjalan bersamaan dengan guard.
+  const loaded = load();
+
+  let user: SessionUser;
+  try {
+    user = await guard;
+  } catch (error) {
+    // Guard gagal (redirect / 403). Batalkan hasil load agar tidak ada
+    // promise rejection yang lolos tanpa penanganan.
+    loaded.catch(() => {});
+    throw error;
+  }
+
+  // Guard sukses: teruskan hasil query. Error non-kontrol di sini adalah bug
+  // query yang sesungguhnya, jadi dibiarkan naik apa adanya.
+  return [user, await loaded];
 }
 
 export class UnauthorizedError extends Error {

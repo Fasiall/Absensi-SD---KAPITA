@@ -3,29 +3,41 @@ import Link from "next/link";
 import { buildReports, resolvePeriod } from "@/lib/reports";
 import { periodeId, tanggalInput } from "@/lib/formatting";
 import { todayLocal, startOfMonth } from "@/lib/time";
+import { getCachedClasses } from "@/lib/cache";
 import { Icon } from "@/components/Icon";
-
-type RekapClass = { id: number; namaKelas: string };
+import { RekapTable } from "@/components/RekapTable";
 
 export type RekapSearchParams = { kelas?: string; dari?: string; sampai?: string };
 
 type ReportData = Awaited<ReturnType<typeof buildReports>>;
 
 export type RekapViewProps = {
-  classes: RekapClass[];
   params: RekapSearchParams;
   basePath: string;
   allLabel: string;
   emptyHint: string;
+  /**
+   * Batasi ke kelas tertentu (dipakai halaman guru). Berisi id saja — array
+   * angka kecil sehingga murah untuk diserialisasi ke RSC payload.
+   */
+  classIds?: number[];
 };
 
 export async function RekapView({
-  classes,
   params,
   basePath,
   allLabel,
   emptyHint,
+  classIds,
 }: RekapViewProps) {
+  // Daftar kelas diambil di sini, bukan lewat props. Melewatkan array besar
+  // sebagai props Server Component membuatnya diserialisasi ulang ke RSC
+  // payload (bisa >200 KB), sehingga HTML dobel dan render jadi lambat.
+  const allClasses = await getCachedClasses();
+  const classes = classIds
+    ? allClasses.filter((item) => classIds.includes(item.id))
+    : allClasses;
+
   const selectedId = Number(params.kelas);
   const selectedClass = classes.find((item) => item.id === selectedId) ?? null;
   const selectedClasses = selectedClass ? [selectedClass] : classes;
@@ -57,8 +69,21 @@ export async function RekapView({
   monthQuery.set("dari", startOfMonth(today));
   monthQuery.set("sampai", today);
 
+  // Data tabel diratakan di sini agar payload ke Client Component seminimal
+  // mungkin — hanya nilai yang ditampilkan, tanpa objek bersarang.
   const rows = data.reports.flatMap((report) =>
-    report.students.map((student) => ({ report, student })),
+    report.students.map((student) => ({
+      key: `${report.classId}-${student.studentId}`,
+      nis: student.nis,
+      nama: student.nama,
+      namaKelas: report.namaKelas,
+      hadir: student.counts.Hadir,
+      sakit: student.counts.Sakit,
+      izin: student.counts.Izin,
+      alpa: student.counts.Alpa,
+      total: student.total,
+      percent: student.percent,
+    })),
   );
 
   const exportHref = `${basePath}/export?${exportQuery.toString()}`;
@@ -206,73 +231,13 @@ export async function RekapView({
           <p className="mt-1 text-sm text-muted">{emptyHint}</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-card border border-line bg-surface shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-canvas text-left text-xs uppercase tracking-wide text-muted">
-                <tr>
-                  <th className="px-4 py-3 font-medium">NIS</th>
-                  <th className="px-4 py-3 font-medium">Nama Siswa</th>
-                  <th className="px-4 py-3 font-medium">Kelas</th>
-                  <th className="px-4 py-3 text-center font-medium">Hadir</th>
-                  <th className="px-4 py-3 text-center font-medium">Sakit</th>
-                  <th className="px-4 py-3 text-center font-medium">Izin</th>
-                  <th className="px-4 py-3 text-center font-medium">Alpa</th>
-                  <th className="px-4 py-3 text-center font-medium">Hari Efektif</th>
-                  <th className="px-4 py-3 font-medium">Kehadiran</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-line">
-                {rows.map(({ report, student }) => (
-                  <tr key={`${report.classId}-${student.studentId}`}>
-                    <td className="px-4 py-3 font-mono text-xs text-muted">{student.nis}</td>
-                    <td className="px-4 py-3 font-medium text-ink">{student.nama}</td>
-                    <td className="px-4 py-3">
-                      <span className="rounded-md border border-line bg-canvas px-2 py-1 text-xs font-medium text-ink">
-                        {report.namaKelas}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center font-semibold text-ok">
-                      {student.counts.Hadir}
-                    </td>
-                    <td className="px-4 py-3 text-center text-ink">{student.counts.Sakit}</td>
-                    <td className="px-4 py-3 text-center text-ink">{student.counts.Izin}</td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={student.counts.Alpa ? "font-semibold text-bad" : "text-muted"}>
-                        {student.counts.Alpa}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center text-ink">{student.total}</td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <span className="w-12 text-xs text-ink">{student.percent}%</span>
-                        <span className="h-1.5 w-24 overflow-hidden rounded-full bg-canvas">
-                          <span
-                            className="block h-full rounded-full bg-ok"
-                            style={{ width: `${student.percent}%` }}
-                          />
-                        </span>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3 text-sm text-muted">
-            <span>
-              {data.totalStudents} siswa &middot; {data.reports.length} kelas &middot; kehadiran{" "}
-              {data.overallPercent}%
-            </span>
-            <Link
-              href={exportHref}
-              className="inline-flex items-center gap-2 rounded-soft bg-accent px-3 py-1.5 text-xs font-medium text-white transition hover:bg-accent-strong"
-            >
-              <Icon name="download" className="h-4 w-4" />
-              Export Excel
-            </Link>
-          </div>
-        </div>
+        <RekapTable
+          rows={rows}
+          totalStudents={data.totalStudents}
+          totalClasses={data.reports.length}
+          overallPercent={data.overallPercent}
+          exportHref={exportHref}
+        />
       )}
     </>
   );

@@ -33,7 +33,7 @@ export default async function GuruRekapPage({
 
   return (
     <RekapView
-      classes={classes.map((item) => ({ id: item.id, namaKelas: item.namaKelas }))}
+      classIds={classes.map((item) => item.id)}
       params={params}
       basePath="/guru/rekap"
       allLabel="Semua kelas saya"
