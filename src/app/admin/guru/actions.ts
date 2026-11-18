@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/db";
+import { revalidateReferenceData } from "@/lib/cache";
 import { requireAdmin } from "@/lib/guards";
 import { isUniqueViolation, validateTeacher } from "@/lib/admin-forms";
 import { hashPassword } from "@/lib/password";
@@ -74,6 +75,7 @@ export async function saveTeacherAction(formData: FormData) {
   }
 
   revalidatePath("/admin/guru");
+  revalidateReferenceData();
   redirect("/admin/guru");
 }
 
@@ -109,5 +111,6 @@ export async function deleteTeacherAction(formData: FormData) {
     { tone: "success", message: `Akun guru ${teacher.nama} berhasil dihapus.` },
   ]);
   revalidatePath("/admin/guru");
+  revalidateReferenceData();
   redirect("/admin/guru");
 }

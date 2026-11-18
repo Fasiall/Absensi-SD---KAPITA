@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/db";
+import { revalidateReferenceData } from "@/lib/cache";
 import { requireAdmin } from "@/lib/guards";
 import { setFlash } from "@/lib/flash";
 
@@ -28,5 +29,6 @@ export async function POST(
     },
   ]);
   revalidatePath("/admin/siswa");
+  revalidateReferenceData();
   redirect("/admin/siswa");
 }

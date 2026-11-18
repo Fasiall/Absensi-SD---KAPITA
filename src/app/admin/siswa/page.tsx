@@ -3,9 +3,10 @@ import type { Metadata } from "next";
 import { AppShell } from "@/components/AppShell";
 import { FlashMessages } from "@/components/FlashMessages";
 import { Icon } from "@/components/Icon";
-import { requireAdmin } from "@/lib/guards";
+import { requireAdmin, guardWith } from "@/lib/guards";
 import { navFor } from "@/lib/nav";
 import { prisma } from "@/lib/db";
+import { getCachedClasses } from "@/lib/cache";
 import { takeFlash } from "@/lib/flash";
 
 export const metadata: Metadata = { title: "Data Siswa" };
@@ -17,8 +18,9 @@ export default async function StudentsPage({
 }: {
   searchParams: Promise<{ q?: string; kelas?: string; page?: string }>;
 }) {
-  const user = await requireAdmin("/admin/siswa");
-  const params = await searchParams;
+  const [user, params] = await guardWith(requireAdmin("/admin/siswa"), () =>
+    searchParams,
+  );
   const flashes = await takeFlash();
 
   const q = (params.q ?? "").trim();
@@ -38,7 +40,7 @@ export default async function StudentsPage({
   };
 
   const [classes, total, students] = await Promise.all([
-    prisma.schoolClass.findMany({ orderBy: { namaKelas: "asc" } }),
+    getCachedClasses(),
     prisma.student.count({ where }),
     prisma.student.findMany({
       where,

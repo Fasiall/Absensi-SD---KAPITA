@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/db";
+import { revalidateReferenceData } from "@/lib/cache";
 import { requireAdmin } from "@/lib/guards";
 import { fileExtension, importStudents } from "@/lib/import";
 import { setFlash, type Flash } from "@/lib/flash";
@@ -69,5 +70,6 @@ export async function importAction(formData: FormData) {
     ...result.errors.map((message): Flash => ({ tone: "danger", message })),
   ]);
   revalidatePath("/admin/siswa");
+  revalidateReferenceData();
   redirect("/admin/import");
 }

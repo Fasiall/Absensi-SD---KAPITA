@@ -41,6 +41,26 @@ export class ForbiddenError extends Error {
   }
 }
 
+/**
+ * Jalankan guard DAN query halaman secara paralel.
+ *
+ * Pola lama (dua roundtrip DB berurutan):
+ *   const user = await requireAdmin("/admin/kelas");  // roundtrip #1
+ *   const data = await prisma...                       // roundtrip #2
+ *
+ * Pola baru (dua roundtrip berjalan bersamaan):
+ *   const [user, data] = await guardWith(requireAdmin("/admin/kelas"), () => prisma...)
+ *
+ * Latensi total menjadi yang paling lambat, bukan jumlah keduanya — memangkas
+ * satu roundtrip penuh per navigasi halaman.
+ */
+export async function guardWith<T>(
+  guard: Promise<SessionUser>,
+  load: () => Promise<T>,
+): Promise<[SessionUser, T]> {
+  return await Promise.all([guard, load()]);
+}
+
 export class UnauthorizedError extends Error {
   constructor(message = "Sesi berakhir. Muat ulang halaman lalu masuk kembali.") {
     super(message);

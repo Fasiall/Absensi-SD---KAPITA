@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/db";
+import { revalidateReferenceData } from "@/lib/cache";
 import { requireAdmin } from "@/lib/guards";
 import { isUniqueViolation, resolveTeacher, validateClass } from "@/lib/admin-forms";
 import { setFlash, type Flash } from "@/lib/flash";
@@ -51,6 +52,7 @@ export async function saveClassAction(formData: FormData) {
   }
 
   revalidatePath("/admin/kelas");
+  revalidateReferenceData();
   redirect("/admin/kelas");
 }
 
@@ -80,5 +82,6 @@ export async function deleteClassAction(formData: FormData) {
     { tone: "success", message: `Kelas ${schoolClass.namaKelas} berhasil dihapus.` },
   ]);
   revalidatePath("/admin/kelas");
+  revalidateReferenceData();
   redirect("/admin/kelas");
 }

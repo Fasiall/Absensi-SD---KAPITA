@@ -1,23 +1,17 @@
 import type { Metadata } from "next";
 
 import { AppShell } from "@/components/AppShell";
-import { requireAdmin } from "@/lib/guards";
+import { requireAdmin, guardWith } from "@/lib/guards";
 import { navFor } from "@/lib/nav";
-import { prisma } from "@/lib/db";
-import { todayLocal } from "@/lib/time";
+import { getDashboardCounts } from "@/lib/cache";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
 export default async function AdminDashboard() {
-  const user = await requireAdmin("/admin");
-  const today = todayLocal();
-
-  const [students, classes, teachers, todayAttendance] = await Promise.all([
-    prisma.student.count({ where: { aktif: true } }),
-    prisma.schoolClass.count(),
-    prisma.user.count({ where: { role: "guru" } }),
-    prisma.attendance.count({ where: { tanggal: new Date(`${today}T00:00:00Z`) } }),
-  ]);
+  const [user, counts] = await guardWith(requireAdmin("/admin"), () =>
+    getDashboardCounts(),
+  );
+  const { students, classes, teachers, todayAttendance } = counts;
 
   const stats = [
     { label: "Siswa aktif", value: students, tone: "text-accent" },

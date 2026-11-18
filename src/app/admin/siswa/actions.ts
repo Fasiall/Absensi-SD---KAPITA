@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/db";
+import { revalidateReferenceData } from "@/lib/cache";
 import { requireAdmin } from "@/lib/guards";
 import { generateQrCode } from "@/lib/attendance";
 import { isUniqueViolation, validateStudent } from "@/lib/admin-forms";
@@ -72,6 +73,7 @@ export async function saveStudentAction(formData: FormData) {
   }
 
   revalidatePath("/admin/siswa");
+  revalidateReferenceData();
   redirect("/admin/siswa");
 }
 
@@ -94,5 +96,6 @@ export async function deleteStudentAction(formData: FormData) {
     },
   ]);
   revalidatePath("/admin/siswa");
+  revalidateReferenceData();
   redirect("/admin/siswa");
 }

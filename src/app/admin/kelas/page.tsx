@@ -3,29 +3,20 @@ import type { Metadata } from "next";
 import { AppShell } from "@/components/AppShell";
 import { FlashMessages } from "@/components/FlashMessages";
 import { Icon } from "@/components/Icon";
-import { requireAdmin } from "@/lib/guards";
+import { requireAdmin, guardWith } from "@/lib/guards";
 import { navFor } from "@/lib/nav";
-import { prisma } from "@/lib/db";
 import { takeFlash } from "@/lib/flash";
+import { getCachedClasses, getCachedTeachers } from "@/lib/cache";
 import { ClassForm } from "./ClassForm";
 import { saveClassAction } from "./actions";
 
 export const metadata: Metadata = { title: "Data Kelas" };
 
 export default async function ClassesPage() {
-  const user = await requireAdmin("/admin/kelas");
-  const [classes, teachers, flashes] = await Promise.all([
-    prisma.schoolClass.findMany({
-      orderBy: { namaKelas: "asc" },
-      include: { guru: true, _count: { select: { students: true } } },
-    }),
-    prisma.user.findMany({
-      where: { role: "guru", aktif: true },
-      orderBy: { nama: "asc" },
-      select: { id: true, nama: true },
-    }),
-    takeFlash(),
-  ]);
+  const [user, [classes, teachers, flashes]] = await guardWith(
+    requireAdmin("/admin/kelas"),
+    () => Promise.all([getCachedClasses(), getCachedTeachers(), takeFlash()]),
+  );
 
   return (
     <AppShell

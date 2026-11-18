@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/db";
+import { revalidateReferenceData } from "@/lib/cache";
 import { requireAdmin } from "@/lib/guards";
 import { setFlash } from "@/lib/flash";
 
@@ -39,5 +40,6 @@ export async function POST(
     { tone: "success", message: `Akun guru ${teacher.nama} berhasil dihapus.` },
   ]);
   revalidatePath("/admin/guru");
+  revalidateReferenceData();
   redirect("/admin/guru");
 }
