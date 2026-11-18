@@ -23,22 +23,20 @@ export default async function LoginPage({
   const schoolName = process.env.SCHOOL_NAME || "SD Negeri Purwodadi Simpang";
   const errorMessage = params.error === "1" ? "Nama pengguna atau kata sandi salah." : "";
 
+  // Di layar kecil panel ilustrasi disembunyikan, jadi grid harus satu kolom
+  // agar form mengisi seluruh lebar. Tanpa grid-cols-1, kolom pertama tetap
+  // ada walau kosong dan form terjepit di separuh layar.
   return (
-    <div className="grid min-h-screen lg:grid-cols-[1.05fr_1fr]">
+    <div className="grid min-h-screen grid-cols-1 lg:grid-cols-[1.05fr_1fr]">
       <LoginVisual />
 
       <section className="flex items-center justify-center bg-[#F6F3F3] px-5 py-10 sm:px-10">
         <div className="w-full max-w-[420px]">
           <div className="mb-8 flex items-center gap-2 lg:hidden">
-            <span className="grid size-10 place-items-center rounded-xl bg-[#16B0F6] text-white">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M3 3h7v7H3V3Zm11 0h7v7h-7V3ZM3 14h7v7H3v-7Zm11 3h3v3h-3v-3Zm4-3h3v3h-3v-3Zm0-3h3v1h-3v-1Zm-4 3h1v3h-1v-3Z" />
-              </svg>
-            </span>
             <span className="text-sm font-semibold tracking-wide">{schoolName}</span>
           </div>
 
-          <h2 className="font-[family-name:var(--font-display)] text-[40px] leading-none text-[#E099B7] sm:text-[48px]">
+          <h2 className="font-[family-name:var(--font-display)] text-[56px] leading-none font-black uppercase tracking-tight text-[#1E88C7] drop-shadow-[0_2px_0_rgba(30,136,199,0.22)] sm:text-[68px]">
             Masuk
           </h2>
           <p className="mt-3 text-sm text-[#6B6B6B]">
