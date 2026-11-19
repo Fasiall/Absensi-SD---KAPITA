@@ -12,6 +12,9 @@ import { saveTeacherAction } from "../../actions";
 
 export const metadata: Metadata = { title: "Ubah Guru" };
 
+/** Membaca cookie sesi — navigasi boleh memblokir. */
+export const instant = false;
+
 export default async function EditTeacherPage({
   params,
 }: {

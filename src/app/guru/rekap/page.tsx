@@ -6,6 +6,9 @@ import { RekapView, type RekapSearchParams } from "@/components/RekapView";
 
 export const metadata = { title: "Rekap absensi" };
 
+/** Membaca cookie sesi dan rekap real-time — navigasi boleh memblokir. */
+export const instant = false;
+
 export default async function GuruRekapPage({
   searchParams,
 }: {

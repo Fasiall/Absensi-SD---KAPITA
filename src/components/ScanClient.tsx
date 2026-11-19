@@ -262,28 +262,26 @@ export function ScanClient({ classId, tanggal, students, counts }: ScanClientPro
   }, [filter, rows]);
 
   return (
-    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
-      <section className="grid gap-4">
-        <div className="rounded-card border border-line bg-surface p-4 shadow-sm">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h2 className="font-display text-base text-ink">Scan Kartu Siswa</h2>
-              <p className="mt-0.5 text-xs text-muted">
-                Kamera akan menyala otomatis. Pastikan pencahayaan cukup.
-              </p>
-            </div>
+    <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
+      <section className="grid min-w-0 grid-cols-1 gap-4">
+        <div id="scan" className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+          <div className="flex items-start justify-between gap-2">
+            <h2 className="min-w-0 flex-1 text-base font-semibold text-ink">Scan Kartu Siswa</h2>
             <span
-              className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
-                cameraOn ? "bg-ok-soft text-ok" : "bg-canvas text-muted"
+              className={`inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                cameraOn ? "bg-ok-soft text-ok" : "bg-slate-50 text-slate-400"
               }`}
             >
               <span className="h-1.5 w-1.5 rounded-full bg-current" />
-              {cameraOn ? "Kamera aktif" : "Kamera nonaktif"}
+              {cameraOn ? "Aktif" : "Nonaktif"}
             </span>
           </div>
+          <p className="mt-1 text-xs text-slate-500">
+            Kamera akan menyala otomatis. Pastikan pencahayaan cukup.
+          </p>
 
-          <div className="relative mt-3 overflow-hidden rounded-soft border border-line bg-black/90">
-            <div id="qr-reader" className="min-h-[260px] w-full" />
+          <div className="relative mt-3 overflow-hidden rounded-xl border border-slate-100 bg-black/90">
+            <div id="qr-reader" className="min-h-[260px] w-full [&_*]:max-w-full [&_video]:h-auto [&_video]:w-full" />
             {!cameraOn ? (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-ink/80 text-center text-white">
                 <Icon name="camera" className="h-8 w-8" />
@@ -293,7 +291,7 @@ export function ScanClient({ classId, tanggal, students, counts }: ScanClientPro
                 <button
                   type="button"
                   onClick={() => void startCamera()}
-                  className="inline-flex items-center gap-2 rounded-soft bg-accent px-3 py-2 text-xs font-medium text-white transition hover:bg-accent-strong"
+                  className="inline-flex items-center gap-2 rounded-xl bg-accent px-3 py-2 text-xs font-medium text-white transition hover:bg-accent-strong"
                 >
                   <Icon name="camera" className="h-4 w-4" />
                   Nyalakan Kamera
@@ -306,18 +304,18 @@ export function ScanClient({ classId, tanggal, students, counts }: ScanClientPro
             <button
               type="button"
               onClick={() => void (cameraOn ? stopCamera() : startCamera())}
-              className="inline-flex items-center gap-2 rounded-soft border border-line px-3 py-1.5 text-xs font-medium text-ink transition hover:bg-canvas"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-medium text-ink transition hover:bg-slate-50"
             >
               <Icon name="camera" className="h-4 w-4" />
               {cameraOn ? "Matikan Kamera" : "Nyalakan Kamera"}
             </button>
-            <span className="text-xs text-muted">
+            <span className="text-xs text-slate-500">
               Scan berjalan otomatis saat QR terdeteksi.
             </span>
           </div>
 
           {pending.length > 0 ? (
-            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-soft border border-warn/40 bg-warn-soft px-3 py-2 text-xs text-ink">
+            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl border border-warn/40 bg-warn-soft px-3 py-2 text-xs text-ink">
               <Icon name="sync" className="h-4 w-4 text-warn" />
               <span>
                 <strong>{pending.length} absensi menunggu sinkron.</strong> Data tersimpan di
@@ -327,7 +325,7 @@ export function ScanClient({ classId, tanggal, students, counts }: ScanClientPro
                 type="button"
                 disabled={busy}
                 onClick={() => void syncPending()}
-                className="rounded-soft bg-warn px-2.5 py-1 font-medium text-white disabled:opacity-60"
+                className="rounded-xl bg-warn px-2.5 py-1 font-medium text-white disabled:opacity-60"
               >
                 Sinkronkan
               </button>
@@ -335,43 +333,87 @@ export function ScanClient({ classId, tanggal, students, counts }: ScanClientPro
           ) : null}
         </div>
 
-        <div className="rounded-card border border-line bg-surface p-4 shadow-sm">
-          <div className="flex items-end justify-between gap-3">
-            <div>
-              <span className="text-xs uppercase tracking-wide text-muted">
-                Kehadiran kelas hari ini
-              </span>
-              <strong className="mt-1 block text-xl text-ink">
-                {summary.Hadir ?? 0}/{summary.total ?? 0} hadir
-              </strong>
+        <div className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm sm:p-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between sm:gap-4">
+              <div className="min-w-0">
+                <h2 className="text-base font-semibold leading-snug text-ink">
+                  Ringkasan Kehadiran
+                </h2>
+                <p className="mt-0.5 text-xs text-slate-500">
+                  Estimasi siswa hadir pada tanggal terpilih.
+                </p>
+              </div>
+              <div className="mt-4">
+                <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                  Hadir hari ini
+                </span>
+                <div className="mt-1 flex items-baseline gap-1.5">
+                  <strong className="text-3xl font-bold leading-none text-ink">
+                    {summary.Hadir ?? 0}
+                  </strong>
+                  <span className="text-sm text-slate-400">/ {summary.total ?? 0} siswa</span>
+                </div>
+                <p className="mt-1 text-xs text-slate-500">
+                  {summary.Belum ?? 0} siswa belum tercatat kehadirannya.
+                </p>
+              </div>
             </div>
-            <span className="text-xl font-semibold text-accent">{percent}%</span>
+
+            <div
+              className="relative grid size-[76px] shrink-0 place-items-center rounded-full sm:size-[88px]"
+              style={{
+                background: `conic-gradient(var(--color-ok) ${percent * 3.6}deg, #f1f5f9 0deg)`,
+              }}
+              aria-label={`${percent}% siswa hadir`}
+            >
+              <div className="grid size-[64px] place-items-center rounded-full bg-white sm:size-[76px]">
+                <div className="text-center leading-none">
+                  <div className="text-sm font-bold text-ink sm:text-base">{percent}%</div>
+                  <div className="mt-1 text-[9px] text-slate-400">dari total</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-canvas">
-            <span className="block h-full rounded-full bg-ok" style={{ width: `${percent}%` }} />
-          </div>
-          <div className="mt-3 flex flex-wrap gap-1.5 text-xs">
-            <span className="rounded-md bg-warn-soft px-2 py-1 font-medium text-warn">
-              Sakit {summary.Sakit ?? 0}
-            </span>
-            <span className="rounded-md bg-accent-soft px-2 py-1 font-medium text-accent">
-              Izin {summary.Izin ?? 0}
-            </span>
-            <span className="rounded-md bg-bad-soft px-2 py-1 font-medium text-bad">
-              Alpa {summary.Alpa ?? 0}
-            </span>
-            <span className="rounded-md bg-canvas px-2 py-1 font-medium text-muted">
-              Belum {summary.Belum ?? 0}
-            </span>
+
+          <div className="mt-5 grid grid-cols-2 gap-2.5 border-t border-slate-100 pt-4">
+            <div className="rounded-xl bg-ok-soft px-3 py-2.5">
+              <div className="flex items-center gap-1.5 text-[11px] font-medium text-ok">
+                <Icon name="check" className="h-3.5 w-3.5" />
+                Hadir
+              </div>
+              <div className="mt-1 text-lg font-bold text-ink">{summary.Hadir ?? 0}</div>
+            </div>
+            <div className="rounded-xl bg-accent-soft px-3 py-2.5">
+              <div className="flex items-center gap-1.5 text-[11px] font-medium text-accent">
+                <Icon name="reports" className="h-3.5 w-3.5" />
+                Izin
+              </div>
+              <div className="mt-1 text-lg font-bold text-ink">{summary.Izin ?? 0}</div>
+            </div>
+            <div className="rounded-xl bg-warn-soft px-3 py-2.5">
+              <div className="flex items-center gap-1.5 text-[11px] font-medium text-warn">
+                <Icon name="info" className="h-3.5 w-3.5" />
+                Sakit
+              </div>
+              <div className="mt-1 text-lg font-bold text-ink">{summary.Sakit ?? 0}</div>
+            </div>
+            <div className="rounded-xl bg-bad-soft px-3 py-2.5">
+              <div className="flex items-center gap-1.5 text-[11px] font-medium text-bad">
+                <Icon name="x" className="h-3.5 w-3.5" />
+                Alpa
+              </div>
+              <div className="mt-1 text-lg font-bold text-ink">{summary.Alpa ?? 0}</div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="rounded-card border border-line bg-surface shadow-sm">
-        <div className="flex items-start justify-between gap-3 border-b border-line px-4 py-3">
+      <section className="min-w-0 rounded-2xl border border-slate-100 bg-white shadow-sm">
+        <div className="flex items-start justify-between gap-3 border-b border-slate-100 px-4 py-3">
           <div>
-            <h2 className="font-display text-base text-ink">Daftar Siswa</h2>
-            <p className="mt-0.5 text-xs text-muted">{rows.length} siswa</p>
+            <h2 className="text-base font-semibold text-ink">Daftar Siswa</h2>
+            <p className="mt-0.5 text-xs text-slate-500">{rows.length} siswa</p>
           </div>
           <div className="flex gap-1">
             {["all", "Belum", "Hadir"].map((key) => (
@@ -382,7 +424,7 @@ export function ScanClient({ classId, tanggal, students, counts }: ScanClientPro
                 className={`rounded-full px-2.5 py-1 text-xs font-medium transition ${
                   filter === key
                     ? "bg-accent text-white"
-                    : "border border-line text-muted hover:bg-canvas"
+                    : "border border-slate-200 text-slate-500 hover:bg-slate-50"
                 }`}
               >
                 {key === "all" ? "Semua" : key}
@@ -391,14 +433,14 @@ export function ScanClient({ classId, tanggal, students, counts }: ScanClientPro
           </div>
         </div>
 
-        <ul className="max-h-[560px] divide-y divide-line overflow-y-auto">
+        <ul className="max-h-[560px] divide-y divide-slate-100 overflow-y-auto">
           {visibleRows.map((row) => (
             <li key={row.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
               <div className="min-w-0">
                 <strong className="block truncate text-sm text-ink">{row.nama}</strong>
-                <span className="text-xs text-muted">NIS {row.nis}</span>
+                <span className="text-xs text-slate-500">NIS {row.nis}</span>
                 {row.catatan ? (
-                  <small className="mt-0.5 block truncate text-xs italic text-muted">
+                  <small className="mt-0.5 block truncate text-xs italic text-slate-500">
                     {row.catatan}
                   </small>
                 ) : null}
@@ -418,7 +460,7 @@ export function ScanClient({ classId, tanggal, students, counts }: ScanClientPro
                     setNote(row.catatan ?? "");
                     setDialogError(null);
                   }}
-                  className="rounded-soft border border-line px-2 py-1 text-xs font-medium text-ink transition hover:bg-canvas"
+                  className="rounded-xl border border-slate-200 px-2 py-1 text-xs font-medium text-ink transition hover:bg-slate-50"
                 >
                   Ubah
                 </button>

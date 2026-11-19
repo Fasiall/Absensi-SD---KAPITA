@@ -7,6 +7,9 @@ import { navFor } from "@/lib/nav";
 
 export const metadata: Metadata = { title: "Ubah Kata Sandi" };
 
+/** Membaca cookie sesi — navigasi boleh memblokir. */
+export const instant = false;
+
 const messages: Record<string, { tone: "ok" | "bad"; text: string }> = {
   empty: { tone: "bad", text: "Semua kolom wajib diisi." },
   short: { tone: "bad", text: "Kata sandi baru minimal 6 karakter." },

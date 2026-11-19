@@ -9,6 +9,9 @@ import { importAction } from "./actions";
 
 export const metadata = { title: "Impor siswa" };
 
+/** Membaca cookie sesi — navigasi boleh memblokir. */
+export const instant = false;
+
 export default async function ImportPage() {
   await requireAdmin("/admin/import");
   const [classes, flashes] = await Promise.all([

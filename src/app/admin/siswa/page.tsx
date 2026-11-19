@@ -11,6 +11,9 @@ import { takeFlash } from "@/lib/flash";
 
 export const metadata: Metadata = { title: "Data Siswa" };
 
+/** Membaca cookie sesi — navigasi boleh memblokir. */
+export const instant = false;
+
 const PER_PAGE = 20;
 
 export default async function StudentsPage({

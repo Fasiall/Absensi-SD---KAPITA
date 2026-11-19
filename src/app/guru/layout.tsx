@@ -5,6 +5,14 @@ import { AppShell } from "@/components/AppShell";
 import { navFor } from "@/lib/nav";
 import { requireStaff } from "@/lib/guards";
 
+/**
+ * Layout ini membaca cookie sesi (lewat `requireStaff`) dan header pathname,
+ * jadi tidak mungkin menghasilkan UI instan saat navigasi. Opt-out validasi
+ * instant navigation supaya dev overlay tidak melaporkan error yang memang
+ * disengaja.
+ */
+export const instant = false;
+
 /** Shell bersama untuk semua halaman guru: navigasi ditangani di satu tempat. */
 export default async function GuruLayout({ children }: { children: ReactNode }) {
   const user = await requireStaff("/guru");
@@ -16,7 +24,7 @@ export default async function GuruLayout({ children }: { children: ReactNode }) 
       nav={navFor(user)}
       current={pathname}
       title="Absensi Guru"
-      subtitle={process.env.SCHOOL_NAME || "SD Negeri Purwodadi Simpang"}
+      hideTitle
     >
       {children}
     </AppShell>

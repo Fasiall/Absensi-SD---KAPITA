@@ -12,6 +12,9 @@ import { saveStudentAction } from "../../actions";
 
 export const metadata: Metadata = { title: "Ubah Siswa" };
 
+/** Membaca cookie sesi — navigasi boleh memblokir. */
+export const instant = false;
+
 export default async function StudentEditPage({
   params,
 }: {

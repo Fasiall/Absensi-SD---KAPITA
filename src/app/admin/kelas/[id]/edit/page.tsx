@@ -12,6 +12,9 @@ import { saveClassAction } from "../../actions";
 
 export const metadata: Metadata = { title: "Ubah Kelas" };
 
+/** Membaca cookie sesi — navigasi boleh memblokir. */
+export const instant = false;
+
 export default async function ClassEditPage({
   params,
 }: {

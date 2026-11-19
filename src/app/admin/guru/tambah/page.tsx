@@ -10,6 +10,9 @@ import { saveTeacherAction } from "../actions";
 
 export const metadata: Metadata = { title: "Tambah Guru" };
 
+/** Membaca cookie sesi — navigasi boleh memblokir. */
+export const instant = false;
+
 export default async function AddTeacherPage() {
   const user = await requireAdmin("/admin/guru");
   const flashes = await takeFlash();

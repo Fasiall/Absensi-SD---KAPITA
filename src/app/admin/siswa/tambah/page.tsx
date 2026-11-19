@@ -10,6 +10,9 @@ import { saveStudentAction } from "../actions";
 
 export const metadata: Metadata = { title: "Tambah Siswa" };
 
+/** Membaca cookie sesi — navigasi boleh memblokir. */
+export const instant = false;
+
 export default async function StudentAddPage() {
   const user = await requireAdmin("/admin/siswa/tambah");
   const [classes, flashes] = await Promise.all([

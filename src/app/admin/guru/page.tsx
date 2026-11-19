@@ -10,6 +10,9 @@ import { takeFlash } from "@/lib/flash";
 
 export const metadata: Metadata = { title: "Data Guru" };
 
+/** Membaca cookie sesi — navigasi boleh memblokir. */
+export const instant = false;
+
 export default async function TeachersPage() {
   const [user, [teachers, flashes]] = await guardWith(
     requireAdmin("/admin/guru"),

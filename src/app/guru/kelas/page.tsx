@@ -10,6 +10,12 @@ import { Icon } from "@/components/Icon";
 
 export const metadata = { title: "Daftar kelas" };
 
+/**
+ * Halaman ini membaca cookie sesi (`requireStaff`) dan menghitung absensi
+ * hari ini, sehingga tidak bisa dirender instan saat navigasi.
+ */
+export const instant = false;
+
 export default async function GuruClassesPage() {
   const user = await requireStaff("/guru/kelas");
   const today = todayLocal();
@@ -46,6 +52,34 @@ export default async function GuruClassesPage() {
           {tanggalId(today)}
         </span>
       </header>
+
+      {/* Menu utama mobile dipindah dari bar bawah ke beranda ini. */}
+      <section className="mb-5 grid grid-cols-2 gap-3" aria-label="Menu cepat">
+        <Link
+          href="/guru/rekap"
+          className="flex flex-col gap-2 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition hover:border-accent"
+        >
+          <span className="grid size-9 place-items-center rounded-xl bg-accent-soft text-accent">
+            <Icon name="reports" size={18} />
+          </span>
+          <span className="text-sm font-semibold text-ink">Rekap</span>
+          <span className="text-[11px] leading-snug text-slate-500">
+            Lihat rekap kehadiran kelas Anda.
+          </span>
+        </Link>
+        <Link
+          href="/cetak"
+          className="flex flex-col gap-2 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm transition hover:border-accent"
+        >
+          <span className="grid size-9 place-items-center rounded-xl bg-slate-100 text-slate-600">
+            <Icon name="cards" size={18} />
+          </span>
+          <span className="text-sm font-semibold text-ink">Kartu QR</span>
+          <span className="text-[11px] leading-snug text-slate-500">
+            Cetak kartu absensi siswa.
+          </span>
+        </Link>
+      </section>
 
       {rows.length === 0 ? (
         <div className="rounded-card border border-line bg-surface p-10 text-center shadow-sm">
