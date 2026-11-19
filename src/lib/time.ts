@@ -1,6 +1,8 @@
 // Port 1:1 dari app/timeutil.py
 // Semua tanggal/jam disimpan & dibaca dalam zona waktu APP_TIMEZONE (default Asia/Jakarta).
 
+import { cacheLife, cacheTag } from "next/cache";
+
 const APP_TZ = process.env.APP_TIMEZONE || "Asia/Jakarta";
 
 /** Bagian-bagian tanggal/jam pada zona waktu aplikasi. */
@@ -32,6 +34,23 @@ export function todayLocal(): string {
 export function timeLocal(): string {
   const p = partsInTz();
   return `${p.hour}:${p.minute}`;
+}
+
+/**
+ * Baca jam sekali di dalam scope cache.
+ *
+ * `new Date()` di Next 16 terbaca sebagai synchronous IO dan menggagalkan
+ * prerender. Fungsi ini satu-satunya jalan yang aman untuk membaca jam pada
+ * Server Component / Server Action. Masa cache dibuat pendek agar pergantian
+ * hari tetap cepat terdeteksi.
+ */
+export async function readClock(): Promise<{ today: string; time: string }> {
+  "use cache";
+  cacheTag("clock");
+  cacheLife({ stale: 30, revalidate: 30, expire: 60 });
+
+  const p = partsInTz();
+  return { today: `${p.year}-${p.month}-${p.day}`, time: `${p.hour}:${p.minute}` };
 }
 
 /** Date object untuk 00:00 UTC dari "YYYY-MM-DD" — dipakai kolom @db.Date. */

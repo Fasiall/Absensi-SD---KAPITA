@@ -42,45 +42,45 @@ export function RekapTable({
   exportHref,
 }: RekapTableProps) {
   return (
-    <div className="overflow-hidden rounded-card border border-line bg-surface shadow-sm">
+    <div className="card overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-canvas text-left text-xs uppercase tracking-wide text-muted">
+          <thead className="table-head border-b border-line bg-canvas text-left">
             <tr>
-              <th className="px-4 py-3 font-medium">NIS</th>
-              <th className="px-4 py-3 font-medium">Nama Siswa</th>
-              <th className="px-4 py-3 font-medium">Kelas</th>
-              <th className="px-4 py-3 text-center font-medium">Hadir</th>
-              <th className="px-4 py-3 text-center font-medium">Sakit</th>
-              <th className="px-4 py-3 text-center font-medium">Izin</th>
-              <th className="px-4 py-3 text-center font-medium">Alpa</th>
-              <th className="px-4 py-3 text-center font-medium">Hari Efektif</th>
-              <th className="px-4 py-3 font-medium">Kehadiran</th>
+              <th className="px-4 py-2.5">NIS</th>
+              <th className="px-4 py-2.5">Nama Siswa</th>
+              <th className="px-4 py-2.5">Kelas</th>
+              <th className="px-4 py-2.5 text-center">Hadir</th>
+              <th className="px-4 py-2.5 text-center">Sakit</th>
+              <th className="px-4 py-2.5 text-center">Izin</th>
+              <th className="px-4 py-2.5 text-center">Alpa</th>
+              <th className="px-4 py-2.5 text-center">Hari Efektif</th>
+              <th className="px-4 py-2.5">Kehadiran</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
             {rows.map((row) => (
-              <tr key={row.key}>
-                <td className="px-4 py-3 font-mono text-xs text-muted">{row.nis}</td>
-                <td className="px-4 py-3 font-medium text-ink">{row.nama}</td>
-                <td className="px-4 py-3">
-                  <span className="rounded-md border border-line bg-canvas px-2 py-1 text-xs font-medium text-ink">
-                    {row.namaKelas}
-                  </span>
+              <tr key={row.key} className="transition-colors hover:bg-canvas/60">
+                <td className="px-4 py-2.5 font-mono text-xs text-muted">{row.nis}</td>
+                <td className="px-4 py-2.5 font-medium text-ink">{row.nama}</td>
+                <td className="px-4 py-2.5">
+                  <span className="badge badge-neutral">{row.namaKelas}</span>
                 </td>
-                <td className="px-4 py-3 text-center font-semibold text-ok">{row.hadir}</td>
-                <td className="px-4 py-3 text-center text-ink">{row.sakit}</td>
-                <td className="px-4 py-3 text-center text-ink">{row.izin}</td>
-                <td className="px-4 py-3 text-center">
+                <td className="px-4 py-2.5 text-center font-semibold tabular-nums text-ok">
+                  {row.hadir}
+                </td>
+                <td className="px-4 py-2.5 text-center tabular-nums text-ink">{row.sakit}</td>
+                <td className="px-4 py-2.5 text-center tabular-nums text-ink">{row.izin}</td>
+                <td className="px-4 py-2.5 text-center tabular-nums">
                   <span className={row.alpa ? "font-semibold text-bad" : "text-muted"}>
                     {row.alpa}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-center text-ink">{row.total}</td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-2.5 text-center tabular-nums text-ink">{row.total}</td>
+                <td className="px-4 py-2.5">
                   <div className="flex items-center gap-2">
-                    <span className="w-12 text-xs text-ink">{row.percent}%</span>
-                    <span className="h-1.5 w-24 overflow-hidden rounded-full bg-canvas">
+                    <span className="w-11 text-xs tabular-nums text-ink">{row.percent}%</span>
+                    <span className="h-1.5 w-20 overflow-hidden rounded-full bg-canvas">
                       <span
                         className="block h-full rounded-full bg-ok"
                         style={{ width: `${row.percent}%` }}
@@ -93,14 +93,11 @@ export function RekapTable({
           </tbody>
         </table>
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3 text-sm text-muted">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3 text-xs text-muted">
         <span>
           {totalStudents} siswa &middot; {totalClasses} kelas &middot; kehadiran {overallPercent}%
         </span>
-        <Link
-          href={exportHref}
-          className="inline-flex items-center gap-2 rounded-soft bg-accent px-3 py-1.5 text-xs font-medium text-white transition hover:bg-accent-strong"
-        >
+        <Link href={exportHref} className="btn btn-primary btn-sm">
           <Icon name="download" className="h-4 w-4" />
           Export Excel
         </Link>

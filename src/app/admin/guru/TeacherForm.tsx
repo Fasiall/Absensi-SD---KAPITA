@@ -12,34 +12,37 @@ export function TeacherForm({ action, values, mode = "create" }: Props) {
   const [aktif, setAktif] = useState(values?.aktif ?? true);
 
   return (
-    <form action={action} className="grid max-w-md gap-4 rounded-2xl border border-line bg-surface p-5 shadow-sm">
-      <label className="grid gap-2">
-        <span className="text-sm font-medium">Nama guru</span>
+    <form action={action} className="card card-pad-lg grid max-w-md gap-3.5">
+      <label className="field">
+        <span className="field-label">Nama guru</span>
         <input
           name="nama"
           defaultValue={values?.nama ?? ""}
           required
           maxLength={100}
-          className="h-11 rounded-xl border border-line bg-white px-3 text-sm outline-none focus:border-accent"
+          className="input"
         />
       </label>
 
-      <label className="grid gap-2">
-        <span className="text-sm font-medium">Username</span>
+      <label className="field">
+        <span className="field-label">Username</span>
         <input
           name="username"
           defaultValue={values?.username ?? ""}
           required
           maxLength={50}
           autoComplete="off"
-          className="h-11 rounded-xl border border-line bg-white px-3 text-sm outline-none focus:border-accent"
+          className="input"
         />
-        <span className="text-xs text-muted">Tanpa spasi. Digunakan untuk login.</span>
+        <span className="field-hint">Tanpa spasi. Digunakan untuk login.</span>
       </label>
 
-      <label className="grid gap-2">
-        <span className="text-sm font-medium">
-          Password {mode === "edit" && <span className="text-muted">(kosongkan bila tidak diubah)</span>}
+      <label className="field">
+        <span className="field-label">
+          Password{" "}
+          {mode === "edit" && (
+            <span className="font-normal text-muted">(kosongkan bila tidak diubah)</span>
+          )}
         </span>
         <input
           name="password"
@@ -47,32 +50,26 @@ export function TeacherForm({ action, values, mode = "create" }: Props) {
           required={mode === "create"}
           minLength={6}
           autoComplete="new-password"
-          className="h-11 rounded-xl border border-line bg-white px-3 text-sm outline-none focus:border-accent"
+          className="input"
         />
       </label>
 
-      <label className="flex items-center gap-2 text-sm">
+      <label className="flex items-center gap-2 text-sm text-ink">
         <input
           name="aktif"
           type="checkbox"
           checked={aktif}
           onChange={(event) => setAktif(event.target.checked)}
-          className="size-4 rounded border-line"
+          className="size-4 rounded border-line accent-accent"
         />
         Akun aktif
       </label>
 
-      <div className="flex items-center gap-2 pt-2">
-        <button
-          type="submit"
-          className="h-11 flex-1 rounded-xl bg-accent text-sm font-semibold text-white transition hover:bg-accent-strong"
-        >
+      <div className="mt-1 flex items-center gap-2">
+        <button type="submit" className="btn btn-primary btn-md flex-1">
           {mode === "edit" ? "Simpan perubahan" : "Simpan akun guru"}
         </button>
-        <a
-          href="/admin/guru"
-          className="grid h-11 place-items-center rounded-xl border border-line px-4 text-sm font-medium text-muted transition hover:bg-canvas"
-        >
+        <a href="/admin/guru" className="btn btn-ghost btn-md">
           Batal
         </a>
       </div>

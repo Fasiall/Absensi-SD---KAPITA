@@ -50,7 +50,7 @@ export function MobileBottomNav({ user, current }: Props) {
         href={item.href}
         aria-current={active ? "page" : undefined}
         className={`flex min-w-0 flex-col items-center justify-center gap-0.5 rounded-full py-1.5 transition ${
-          active ? "text-accent" : "text-slate-500 hover:text-slate-700"
+          active ? "text-accent" : "text-muted hover:text-ink"
         }`}
       >
         <span
@@ -78,10 +78,10 @@ export function MobileBottomNav({ user, current }: Props) {
     >
       <div className="relative mx-auto mb-3 w-full max-w-md px-4">
         <div
-          className="pointer-events-none absolute inset-x-0 -top-6 bottom-0 bg-gradient-to-t from-[#faf9f7] via-[#faf9f7]/85 to-transparent"
+          className="pointer-events-none absolute inset-x-0 -top-6 bottom-0 bg-gradient-to-t from-canvas via-canvas/85 to-transparent"
           aria-hidden="true"
         />
-        <div className="relative rounded-full bg-slate-200 shadow-xl shadow-slate-900/15 ring-1 ring-slate-300/70">
+        <div className="relative rounded-full bg-line shadow-xl shadow-ink/15 ring-1 ring-line">
           <div className="grid h-16 grid-cols-3 items-center">
             {renderItem(menu.home)}
             <div aria-hidden="true" />
@@ -95,15 +95,15 @@ export function MobileBottomNav({ user, current }: Props) {
             className="absolute left-1/2 top-0 flex -translate-x-1/2 -translate-y-[32%] flex-col items-center transition active:scale-95"
           >
             <span
-              className={`grid size-14 place-items-center rounded-full bg-white text-accent ring-[4px] ring-slate-200 transition ${
+              className={`grid size-14 place-items-center rounded-full bg-surface text-accent ring-4 ring-line transition ${
                 scanActive
                   ? "shadow-lg shadow-accent/40"
-                  : "shadow-md shadow-slate-900/25"
+                  : "shadow-md shadow-ink/25"
               }`}
             >
               <QrCode size={26} strokeWidth={scanActive ? 2.4 : 2} />
             </span>
-            <span className="mt-0.5 rounded-full bg-slate-200 px-1.5 text-[10px] font-bold leading-[1.4] text-ink">
+            <span className="mt-0.5 rounded-full bg-line px-1.5 text-[10px] font-bold leading-[1.4] text-ink">
               {SCAN.label}
             </span>
           </a>

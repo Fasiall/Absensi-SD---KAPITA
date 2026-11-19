@@ -6,9 +6,14 @@ import { parseDate, startOfMonth, todayLocal } from "@/lib/time";
 
 export type Period = { start: string; end: string };
 
-/** Setara resolve_period(): default bulan berjalan s/d hari ini, start<=end, end<=hari ini. */
-export function resolvePeriod(params: URLSearchParams): Period {
-  const today = todayLocal();
+/**
+ * Setara resolve_period(): default bulan berjalan s/d hari ini, start<=end, end<=hari ini.
+ *
+ * `today` dioper dari pemanggil supaya pembacaan jam terjadi di satu tempat yang
+ * sudah dibungkus `"use cache"` (`readClock()`). Kalau tidak, `todayLocal()` di
+ * sini memicu `new Date()` yang terbaca sebagai synchronous IO saat prerender.
+ */
+export function resolvePeriod(params: URLSearchParams, today = todayLocal()): Period {
   let start = parseDate(params.get("dari"), startOfMonth(today));
   let end = parseDate(params.get("sampai"), today);
   if (start > end) [start, end] = [end, start];

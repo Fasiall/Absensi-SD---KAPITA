@@ -30,27 +30,23 @@ export default function AppError({
   }, [error]);
 
   return (
-    <main className="grid min-h-screen place-items-center bg-[#F6F3F3] px-5 py-10">
-      <div className="w-full max-w-[440px] rounded-2xl bg-white p-7 text-center shadow-sm">
-        <h1 className="font-[family-name:var(--font-display)] text-2xl font-black text-[#1E88C7]">
+    <main className="grid min-h-screen place-items-center bg-canvas px-4 py-10">
+      <div className="card card-pad-lg w-full max-w-[420px] text-center">
+        <h1 className="page-title text-[1.375rem]">
           {offline ? "Database belum bisa diakses" : "Terjadi kesalahan"}
         </h1>
 
-        <p className="mt-3 text-sm text-[#6B6B6B]">
+        <p className="mt-2 text-sm leading-relaxed text-muted">
           {offline
             ? "Server data sedang tidak merespons. Biasanya hanya sebentar — silakan coba lagi beberapa saat lagi."
             : "Halaman ini gagal dimuat. Coba muat ulang; kalau masih gagal, hubungi admin sekolah."}
         </p>
 
         {error.digest && (
-          <p className="mt-4 text-xs text-[#9A9A9A]">Kode kesalahan: {error.digest}</p>
+          <p className="mt-4 font-mono text-xs text-subtle">Kode kesalahan: {error.digest}</p>
         )}
 
-        <button
-          type="button"
-          onClick={reset}
-          className="mt-6 h-11 w-full rounded-[40px] bg-[#1E88C7] text-sm font-semibold uppercase tracking-[0.14em] text-white transition hover:bg-[#1976AF]"
-        >
+        <button type="button" onClick={reset} className="btn btn-primary btn-lg btn-block mt-6">
           Coba lagi
         </button>
       </div>

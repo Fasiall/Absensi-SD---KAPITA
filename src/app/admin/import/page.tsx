@@ -25,47 +25,42 @@ export default async function ImportPage() {
   return (
     <>
       <header className="mb-5">
-        <h1 className="font-display text-2xl text-ink">Impor Siswa</h1>
-        <p className="mt-1 text-sm text-muted">
+        <p className="eyebrow mb-2">Data siswa</p>
+        <h1 className="page-title">Impor Siswa</h1>
+        <p className="page-subtitle">
           Unggah file Excel atau CSV berisi daftar siswa untuk ditambahkan sekaligus.
         </p>
       </header>
 
       <FlashMessages messages={flashes} />
 
-      <div className="grid gap-5 lg:grid-cols-[1fr_320px]">
-        <section className="rounded-card border border-line bg-surface p-5 shadow-sm">
+      <div className="grid gap-3 lg:grid-cols-[1fr_320px]">
+        <section className="card card-pad-lg">
           <form action={importAction} className="grid gap-4">
-            <label className="grid gap-1.5 text-sm">
-              <span className="font-medium text-ink">File Excel / CSV</span>
+            <label className="field">
+              <span className="field-label">File Excel / CSV</span>
               <input
                 type="file"
                 name="file"
                 accept=".xlsx,.csv"
                 required
-                className="rounded-soft border border-line bg-canvas px-3 py-2 text-sm text-ink file:mr-3 file:rounded-md file:border-0 file:bg-accent file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-white hover:file:bg-accent-strong"
+                className="w-full rounded-soft border border-line bg-canvas px-3 py-2 text-sm text-ink file:mr-3 file:rounded-soft file:border-0 file:bg-accent file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:bg-accent-strong"
               />
-              <span className="text-xs text-muted">Format yang didukung: .xlsx dan .csv</span>
+              <span className="field-hint">Format yang didukung: .xlsx dan .csv</span>
             </label>
 
-            <div className="flex flex-wrap items-center gap-3">
-              <button
-                type="submit"
-                className="inline-flex items-center gap-2 rounded-soft bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-strong"
-              >
-                <Icon name="import" className="h-4 w-4" />
+            <div className="flex flex-wrap items-center gap-2">
+              <button type="submit" className="btn btn-primary">
+                <Icon name="import" size={16} />
                 Unggah &amp; impor
               </button>
-              <Link
-                href="/admin/siswa/template"
-                className="inline-flex items-center gap-2 rounded-soft border border-line px-4 py-2 text-sm font-medium text-ink transition hover:bg-canvas"
-              >
-                <Icon name="download" className="h-4 w-4" />
+              <Link href="/admin/siswa/template" className="btn btn-secondary">
+                <Icon name="download" size={16} />
                 Unduh template
               </Link>
               <Link
                 href="/admin/siswa"
-                className="text-sm font-medium text-muted transition hover:text-ink"
+                className="text-xs font-medium text-muted transition-colors hover:text-ink"
               >
                 Kembali ke daftar siswa
               </Link>
@@ -73,28 +68,25 @@ export default async function ImportPage() {
           </form>
         </section>
 
-        <aside className="rounded-card border border-line bg-surface p-5 shadow-sm">
-          <h2 className="font-display text-base text-ink">Panduan singkat</h2>
-          <ol className="mt-3 grid list-decimal gap-2 pl-4 text-sm text-muted">
+        <aside className="card card-pad-lg h-fit">
+          <h2 className="section-title">Panduan singkat</h2>
+          <ol className="mt-3 grid list-decimal gap-1.5 pl-4 text-xs leading-relaxed text-muted">
             <li>Unduh template agar susunan kolom sesuai.</li>
             <li>Isi kolom NIS, Nama, dan Kelas mulai baris kedua.</li>
             <li>NIS harus unik dan belum pernah terdaftar.</li>
-            <li>Nama kelas harus sama persis dengan daftar di samping.</li>
+            <li>Nama kelas harus sama persis dengan daftar di bawah.</li>
             <li>Simpan lalu unggah kembali di form ini.</li>
           </ol>
 
-          <h3 className="mt-5 text-sm font-medium text-ink">Kelas tersedia</h3>
+          <h3 className="section-title mt-5 text-[0.8125rem]">Kelas tersedia</h3>
           {classes.length === 0 ? (
-            <p className="mt-2 text-sm text-muted">
+            <p className="mt-2 text-xs text-muted">
               Belum ada kelas. Tambahkan kelas terlebih dahulu.
             </p>
           ) : (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {classes.map((item) => (
-                <span
-                  key={item.namaKelas}
-                  className="rounded-md border border-line bg-canvas px-2 py-1 text-xs font-medium text-ink"
-                >
+                <span key={item.namaKelas} className="badge badge-neutral">
                   {item.namaKelas}
                 </span>
               ))}

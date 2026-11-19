@@ -20,7 +20,7 @@ export function StudentForm({ action, classes, values, student, qrPreview, flash
   const [aktif, setAktif] = useState(values.aktif);
 
   return (
-    <form action={action} className="grid gap-5">
+    <form action={action} className="grid gap-4">
       {student && <input type="hidden" name="id" value={student.id} />}
 
       {flashes.length > 0 && (
@@ -28,44 +28,40 @@ export function StudentForm({ action, classes, values, student, qrPreview, flash
           {flashes.map((flash, index) => (
             <div
               key={index}
-              className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-bad"
+              className="flex items-start gap-2.5 rounded-soft border border-bad/25 bg-bad-soft px-3 py-2.5 text-xs leading-relaxed text-bad"
             >
-              {flash.message}
+              <Icon name="info" className="mt-0.5 h-4 w-4 shrink-0" />
+              <span className="font-medium">{flash.message}</span>
             </div>
           ))}
         </div>
       )}
 
-      <div className="rounded-2xl border border-line bg-surface p-5 shadow-sm">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="grid gap-2">
-            <span className="text-sm font-medium">NIS</span>
+      <div className="card card-pad-lg">
+        <div className="grid gap-3.5 sm:grid-cols-2">
+          <label className="field">
+            <span className="field-label">NIS</span>
             <input
               name="nis"
               defaultValue={values.nis}
               required
               maxLength={30}
-              className="h-11 rounded-xl border border-line bg-white px-3 text-sm outline-none focus:border-accent"
+              className="input"
             />
           </label>
-          <label className="grid gap-2">
-            <span className="text-sm font-medium">Nama siswa</span>
+          <label className="field">
+            <span className="field-label">Nama siswa</span>
             <input
               name="nama"
               defaultValue={values.nama}
               required
               maxLength={100}
-              className="h-11 rounded-xl border border-line bg-white px-3 text-sm outline-none focus:border-accent"
+              className="input"
             />
           </label>
-          <label className="grid gap-2 sm:col-span-2">
-            <span className="text-sm font-medium">Kelas</span>
-            <select
-              name="class_id"
-              defaultValue={values.class_id}
-              required
-              className="h-11 rounded-xl border border-line bg-white px-3 text-sm outline-none focus:border-accent"
-            >
+          <label className="field sm:col-span-2">
+            <span className="field-label">Kelas</span>
+            <select name="class_id" defaultValue={values.class_id} required className="select">
               <option value="">— Pilih kelas —</option>
               {classes.map((item) => (
                 <option key={item.id} value={item.id}>
@@ -76,55 +72,58 @@ export function StudentForm({ action, classes, values, student, qrPreview, flash
           </label>
         </div>
 
-        <label className="mt-4 flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            name="aktif"
-            value="1"
-            checked={aktif}
-            onChange={(event) => setAktif(event.target.checked)}
-            className="size-4 accent-accent"
-          />
-          Siswa aktif (dapat dipindai)
-        </label>
-
-        {student && (
-          <label className="mt-2 flex items-center gap-2 text-sm">
+        <div className="mt-4 grid gap-2 border-t border-line pt-3.5">
+          <label className="flex items-center gap-2 text-sm text-ink">
             <input
               type="checkbox"
-              name="regenerate_qr"
+              name="aktif"
               value="1"
-              className="size-4 accent-accent"
+              checked={aktif}
+              onChange={(event) => setAktif(event.target.checked)}
+              className="size-4 rounded border-line accent-accent"
             />
-            Buat ulang kode QR
+            Siswa aktif (dapat dipindai)
           </label>
-        )}
+
+          {student && (
+            <label className="flex items-center gap-2 text-sm text-ink">
+              <input
+                type="checkbox"
+                name="regenerate_qr"
+                value="1"
+                className="size-4 rounded border-line accent-accent"
+              />
+              Buat ulang kode QR
+            </label>
+          )}
+        </div>
       </div>
 
       {qrPreview && (
-        <div className="flex items-center gap-4 rounded-2xl border border-line bg-surface p-5 shadow-sm">
+        <div className="card card-pad-lg flex items-center gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={qrPreview} alt="Kode QR siswa" width={112} height={112} className="rounded-xl" />
-          <div className="text-sm text-muted">
-            <div className="font-medium text-ink">Kode QR saat ini</div>
+          <img
+            src={qrPreview}
+            alt="Kode QR siswa"
+            width={104}
+            height={104}
+            className="shrink-0 rounded-soft border border-line"
+          />
+          <div className="min-w-0 text-xs leading-relaxed text-muted">
+            <div className="text-sm font-semibold text-ink">Kode QR saat ini</div>
             <p className="mt-1">
-              Cetak kartu absensi dari menu <strong>Kartu</strong> agar QR siap dipakai.
+              Cetak kartu absensi dari menu <strong className="text-ink">Kartu</strong> agar QR
+              siap dipakai.
             </p>
           </div>
         </div>
       )}
 
       <div className="flex flex-wrap gap-2">
-        <button
-          type="submit"
-          className="inline-flex h-11 items-center gap-2 rounded-xl bg-accent px-5 text-sm font-semibold text-white transition hover:bg-accent-strong"
-        >
+        <button type="submit" className="btn btn-primary btn-md">
           <Icon name="check" size={18} /> Simpan
         </button>
-        <a
-          href="/admin/siswa"
-          className="inline-flex h-11 items-center rounded-xl border border-line bg-surface px-5 text-sm font-medium transition hover:border-accent hover:text-accent"
-        >
+        <a href="/admin/siswa" className="btn btn-ghost btn-md">
           Batal
         </a>
       </div>

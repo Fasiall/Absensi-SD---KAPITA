@@ -1,29 +1,54 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   DESIGN SYSTEM
+   Satu bahasa desain untuk seluruh aplikasi.
+   - Font  : Plus Jakarta Sans untuk semua teks (tanpa serif dekoratif)
+   - Skala : H1 28px / H2 16px / eyebrow 11px
+   - Warna : token semantik (ink, muted, line, canvas, surface, accent, ok/warn/bad)
+   ========================================================================== */
+
 @theme {
+  /* --- Warna ------------------------------------------------------------ */
   --color-accent: #2563eb;
   --color-accent-strong: #1d4ed8;
   --color-accent-soft: #eff6ff;
+
   --color-surface: #ffffff;
-  --color-canvas: #f4f7fb;
-  --color-ink: #1e293b;
-  --color-muted: #64748b;
-  --color-line: #e2e8f0;
-  --color-ok: #16a34a;
+  --color-canvas: #f5f6f8;
+  --color-line: #e5e7eb;
+
+  --color-ink: #111827;
+  --color-ink-soft: #374151;
+  --color-muted: #6b7280;
+  --color-subtle: #9ca3af;
+
+  --color-ok: #15803d;
   --color-ok-soft: #f0fdf4;
-  --color-warn: #d97706;
+  --color-warn: #b45309;
   --color-warn-soft: #fffbeb;
   --color-bad: #dc2626;
   --color-bad-soft: #fef2f2;
 
-  --radius-card: 16px;
-  --radius-soft: 12px;
+  /* --- Radius ----------------------------------------------------------- */
+  --radius-soft: 10px;
+  --radius-card: 14px;
+  --radius-pill: 999px;
 
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system,
+  /* --- Tipografi -------------------------------------------------------- */
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", Roboto, sans-serif;
-  --font-display: var(--font-sekuya), ui-serif, Georgia, serif;
-  --font-tagline: var(--font-russo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+
+  /* Skala tipe. */
+  --text-h1: 1.75rem; /* 28px */
+  --text-h2: 1rem; /* 16px */
+  --text-eyebrow: 0.6875rem; /* 11px */
 }
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
 
 html,
 body {
@@ -35,12 +60,349 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 *:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
+
+/* ==========================================================================
+   Komponen
+   Kelas di bawah ini adalah satu-satunya cara memakai gaya tersebut.
+   ========================================================================== */
+
+@layer components {
+  /* --- Judul ------------------------------------------------------------ */
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .page-title {
+    font-size: var(--text-h1);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    color: var(--color-ink);
+  }
+
+  .page-subtitle {
+    margin-top: 0.375rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  .section-title {
+    font-size: var(--text-h2);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+    color: var(--color-ink);
+  }
+
+  .section-subtitle {
+    margin-top: 0.125rem;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--color-muted);
+  }
+
+  .stat-label {
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    line-height: 1.2;
+    text-transform: uppercase;
+    color: var(--color-subtle);
+  }
+
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--color-ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* --- Tombol ----------------------------------------------------------- */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    /* Tinggi default = ukuran medium. Varian .btn-sm / .btn-lg menimpanya. */
+    height: 2.25rem;
+    padding-inline: 0.875rem;
+    border-radius: var(--radius-soft);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease,
+      box-shadow 150ms ease,
+      transform 150ms ease;
+    cursor: pointer;
+  }
+
+  .btn:disabled,
+  .btn[aria-disabled="true"] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .btn:active:not(:disabled) {
+    transform: scale(0.985);
+  }
+
+  .btn-md {
+    height: 2.25rem;
+    padding-inline: 0.875rem;
+    font-size: 0.875rem;
+  }
+
+  .btn-lg {
+    height: 2.75rem;
+    padding-inline: 1.125rem;
+    font-size: 0.9375rem;
+  }
+
+  .btn-sm {
+    height: 1.875rem;
+    padding-inline: 0.625rem;
+    font-size: 0.75rem;
+    gap: 0.375rem;
+  }
+
+  .btn-block {
+    width: 100%;
+  }
+
+  .btn-primary {
+    background-color: var(--color-accent);
+    color: #fff;
+    box-shadow: 0 1px 2px rgb(37 99 235 / 0.25);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background-color: var(--color-accent-strong);
+  }
+
+  .btn-secondary {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    color: var(--color-ink);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background-color: var(--color-canvas);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-muted);
+  }
+
+  .btn-ghost:hover:not(:disabled) {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  .btn-danger {
+    background-color: var(--color-bad);
+    color: #fff;
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    background-color: #b91c1c;
+  }
+
+  .btn-icon {
+    display: inline-grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: var(--radius-soft);
+    color: var(--color-muted);
+    transition:
+      background-color 150ms ease,
+      color 150ms ease;
+  }
+
+  .btn-icon:hover {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  /* --- Kartu ------------------------------------------------------------ */
+
+  .card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+  }
+
+  .card-pad {
+    padding: 1rem;
+  }
+
+  .card-pad-lg {
+    padding: 1.25rem;
+  }
+
+  .card-link {
+    display: block;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    padding: 1rem;
+    transition:
+      border-color 150ms ease,
+      box-shadow 150ms ease;
+  }
+
+  .card-link:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 2px 12px -4px rgb(37 99 235 / 0.25);
+  }
+
+  /* --- Badge / chip ----------------------------------------------------- */
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: var(--radius-pill);
+    padding: 0.125rem 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  .badge-accent {
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent-strong);
+  }
+
+  .badge-neutral {
+    background-color: var(--color-canvas);
+    color: var(--color-muted);
+  }
+
+  .badge-ok {
+    background-color: var(--color-ok-soft);
+    color: var(--color-ok);
+  }
+
+  .badge-warn {
+    background-color: var(--color-warn-soft);
+    color: var(--color-warn);
+  }
+
+  .badge-bad {
+    background-color: var(--color-bad-soft);
+    color: var(--color-bad);
+  }
+
+  /* --- Formulir --------------------------------------------------------- */
+
+  .field {
+    display: grid;
+    gap: 0.375rem;
+  }
+
+  .field-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-ink-soft);
+  }
+
+  .field-hint {
+    font-size: 0.75rem;
+    color: var(--color-muted);
+  }
+
+  .input,
+  .select {
+    width: 100%;
+    height: 2.5rem;
+    min-width: 0;
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-soft);
+    background-color: var(--color-surface);
+    padding-inline: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--color-ink);
+    transition:
+      border-color 150ms ease,
+      box-shadow 150ms ease;
+  }
+
+  .input::placeholder {
+    color: var(--color-subtle);
+  }
+
+  .input:focus,
+  .select:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgb(37 99 235 / 0.12);
+  }
+
+  .input:disabled,
+  .select:disabled {
+    background-color: var(--color-canvas);
+    color: var(--color-muted);
+  }
+
+  .select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.625rem center;
+    padding-right: 2rem;
+  }
+
+  /* --- Tabel ------------------------------------------------------------ */
+
+  .table-head {
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-subtle);
+  }
+
+  /* --- Keadaan kosong --------------------------------------------------- */
+
+  .empty-state {
+    border: 1px dashed var(--color-line);
+    border-radius: var(--radius-card);
+    background-color: var(--color-surface);
+    padding: 2.5rem 1.25rem;
+    text-align: center;
+  }
+}
+
+/* ==========================================================================
+   Print
+   ========================================================================== */
 
 @media print {
   body {

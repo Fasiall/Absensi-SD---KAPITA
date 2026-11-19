@@ -16,7 +16,7 @@ export default async function CetakLayout({ children }: { children: ReactNode })
       nav={navFor(user)}
       current={pathname}
       title="Cetak Kartu"
-      subtitle={process.env.SCHOOL_NAME || "SD Negeri Purwodadi Simpang"}
+      hideTitle
     >
       {children}
     </AppShell>

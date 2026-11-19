@@ -3,7 +3,7 @@ import "server-only";
 import { cacheLife, cacheTag, revalidateTag } from "next/cache";
 
 import { prisma } from "@/lib/db";
-import { todayLocal } from "@/lib/time";
+import { readClock, todayLocal } from "@/lib/time";
 
 /**
  * Cache untuk data yang jarang berubah.
@@ -69,6 +69,17 @@ export async function getDashboardCounts() {
     }),
   ]);
   return { students, classes, teachers, todayAttendance };
+}
+
+/**
+ * Jam lokal untuk sapaan dan label tanggal di dashboard.
+ *
+ * `new Date()` di Next 16 terbaca sebagai synchronous IO saat prerender.
+ * `readClock()` sudah dibungkus `"use cache"`, jadi cukup diteruskan.
+ */
+export async function getTodayClock() {
+  const { today, time } = await readClock();
+  return { now: today, jam: Number(time.slice(0, 2)) };
 }
 
 /**

@@ -1,25 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Russo_One, Sekuya } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import { ServiceWorkerRegistrar } from "@/components/ServiceWorkerRegistrar";
 import "./globals.css";
 
+/** Satu-satunya font aplikasi. Semua heading & teks memakai ini. */
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
   subsets: ["latin"],
-  display: "swap",
-});
-
-const russo = Russo_One({
-  variable: "--font-russo",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-});
-
-const sekuya = Sekuya({
-  variable: "--font-sekuya",
-  subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -57,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="id"
-      className={`${jakarta.variable} ${russo.variable} ${sekuya.variable} h-full`}
+      className={`${jakarta.variable} h-full`}
     >
       <body className="min-h-full">
         {children}

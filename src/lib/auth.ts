@@ -1,5 +1,6 @@
 import "server-only";
 
+import { cacheLife } from "next/cache";
 import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 
@@ -48,8 +49,19 @@ export async function readSessionUserId(): Promise<number | null> {
   }
 }
 
-/** Setara user_loader: hanya mengembalikan user yang masih aktif. */
+/**
+ * Setara user_loader: hanya mengembalikan user yang masih aktif.
+ *
+ * `jwtVerify()` memeriksa klaim `exp` dengan `new Date()`. Di Next 16 panggilan
+ * itu terbaca sebagai synchronous IO dan menggagalkan prerender. Scope
+ * `"use cache: private"` membuat `io()` menjadi no-op sekaligus mengeluarkan
+ * pembacaan sesi dari static shell — cache-nya hanya ada di sisi browser,
+ * tidak pernah disimpan di cache server.
+ */
 export async function getCurrentUser(): Promise<SessionUser | null> {
+  "use cache: private";
+  cacheLife({ stale: Infinity });
+
   const id = await readSessionUserId();
   if (!id) return null;
   const user = await prisma.user.findUnique({

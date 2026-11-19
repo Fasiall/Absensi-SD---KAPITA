@@ -25,9 +25,9 @@ export default async function GuruRekapPage({
 
   if (classes.length === 0) {
     return (
-      <div className="rounded-card border border-line bg-surface p-10 text-center shadow-sm">
-        <h1 className="font-display text-lg text-ink">Belum ada kelas</h1>
-        <p className="mt-1 text-sm text-muted">
+      <div className="empty-state">
+        <h1 className="section-title">Belum ada kelas</h1>
+        <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-muted">
           Admin belum menugaskan kelas untuk Anda. Hubungi admin terlebih dahulu.
         </p>
       </div>

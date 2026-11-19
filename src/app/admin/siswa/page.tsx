@@ -72,16 +72,10 @@ export default async function StudentsPage({
       subtitle={`${total} siswa terdaftar`}
       actions={
         <>
-          <a
-            href="/admin/siswa/impor"
-            className="inline-flex h-10 items-center gap-2 rounded-xl border border-line bg-surface px-4 text-sm font-medium transition hover:border-accent hover:text-accent"
-          >
+          <a href="/admin/siswa/impor" className="btn btn-secondary">
             <Icon name="import" size={18} /> Impor
           </a>
-          <a
-            href="/admin/siswa/tambah"
-            className="inline-flex h-10 items-center gap-2 rounded-xl bg-accent px-4 text-sm font-semibold text-white transition hover:bg-accent-strong"
-          >
+          <a href="/admin/siswa/tambah" className="btn btn-primary">
             <Icon name="plus" size={18} /> Tambah
           </a>
         </>
@@ -89,86 +83,89 @@ export default async function StudentsPage({
     >
       <FlashMessages messages={flashes} />
 
-      <form className="mb-4 flex flex-wrap items-center gap-2" action="/admin/siswa">
-        <div className="relative flex-1 min-w-56">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted">
-            <Icon name="search" size={18} />
+      <form className="card card-pad mb-3.5 flex flex-wrap items-end gap-2" action="/admin/siswa">
+        <label className="field min-w-52 flex-1">
+          <span className="field-label">Carian</span>
+          <span className="relative block">
+            <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-subtle">
+              <Icon name="search" size={16} />
+            </span>
+            <input
+              name="q"
+              defaultValue={q}
+              placeholder="Cari nama atau NIS..."
+              className="input pl-9"
+            />
           </span>
-          <input
-            name="q"
-            defaultValue={q}
-            placeholder="Cari nama atau NIS..."
-            className="h-10 w-full rounded-xl border border-line bg-surface pl-10 pr-3 text-sm outline-none focus:border-accent"
-          />
-        </div>
-        <select
-          name="kelas"
-          defaultValue={Number.isFinite(selectedClassId) ? String(selectedClassId) : ""}
-          className="h-10 rounded-xl border border-line bg-surface px-3 text-sm outline-none focus:border-accent"
-        >
-          <option value="">Semua kelas</option>
-          {classes.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.namaKelas}
-            </option>
-          ))}
-        </select>
-        <button
-          type="submit"
-          className="h-10 rounded-xl border border-line bg-surface px-4 text-sm font-medium transition hover:border-accent hover:text-accent"
-        >
+        </label>
+        <label className="field">
+          <span className="field-label">Kelas</span>
+          <select
+            name="kelas"
+            defaultValue={Number.isFinite(selectedClassId) ? String(selectedClassId) : ""}
+            className="select"
+          >
+            <option value="">Semua kelas</option>
+            {classes.map((item) => (
+              <option key={item.id} value={item.id}>
+                {item.namaKelas}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button type="submit" className="btn btn-secondary btn-md">
           Terapkan
         </button>
       </form>
 
-      <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
+      <div className="card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-canvas text-left text-xs uppercase tracking-wide text-muted">
+            <thead className="table-head border-b border-line bg-canvas text-left">
               <tr>
-                <th className="px-4 py-3 font-medium">NIS</th>
-                <th className="px-4 py-3 font-medium">Nama</th>
-                <th className="px-4 py-3 font-medium">Kelas</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 text-right font-medium">Aksi</th>
+                <th className="px-4 py-2.5">NIS</th>
+                <th className="px-4 py-2.5">Nama</th>
+                <th className="px-4 py-2.5">Kelas</th>
+                <th className="px-4 py-2.5">Status</th>
+                <th className="px-4 py-2.5 text-right">Aksi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-line">
               {students.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-10 text-center text-muted">
+                  <td colSpan={5} className="px-4 py-10 text-center text-sm text-muted">
                     Belum ada siswa yang cocok dengan pencarian.
                   </td>
                 </tr>
               )}
               {students.map((student) => (
-                <tr key={student.id} className="hover:bg-canvas/60">
-                  <td className="px-4 py-3 font-mono text-xs">{student.nis}</td>
-                  <td className="px-4 py-3 font-medium">{student.nama}</td>
-                  <td className="px-4 py-3 text-muted">{student.schoolClass.namaKelas}</td>
-                  <td className="px-4 py-3">
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                        student.aktif ? "bg-green-50 text-ok" : "bg-canvas text-muted"
-                      }`}
-                    >
+                <tr key={student.id} className="transition-colors hover:bg-canvas/60">
+                  <td className="px-4 py-2.5 font-mono text-xs text-muted">{student.nis}</td>
+                  <td className="px-4 py-2.5 font-medium text-ink">{student.nama}</td>
+                  <td className="px-4 py-2.5">
+                    <span className="badge badge-neutral">{student.schoolClass.namaKelas}</span>
+                  </td>
+                  <td className="px-4 py-2.5">
+                    <span className={`badge ${student.aktif ? "badge-ok" : "badge-neutral"}`}>
                       {student.aktif ? "Aktif" : "Nonaktif"}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-2.5">
                     <div className="flex items-center justify-end gap-1">
                       <a
                         href={`/admin/siswa/${student.id}/edit`}
-                        className="grid size-8 place-items-center rounded-lg text-muted transition hover:bg-accent-soft hover:text-accent"
+                        className="btn-icon"
                         title="Ubah"
+                        aria-label={`Ubah ${student.nama}`}
                       >
                         <Icon name="edit" size={16} />
                       </a>
                       <form action={`/admin/siswa/${student.id}/hapus`} method="post">
                         <button
                           type="submit"
-                          className="grid size-8 place-items-center rounded-lg text-muted transition hover:bg-red-50 hover:text-bad"
+                          className="btn-icon hover:bg-bad-soft hover:text-bad"
                           title="Hapus"
+                          aria-label={`Hapus ${student.nama}`}
                         >
                           <Icon name="trash" size={16} />
                         </button>
@@ -183,24 +180,18 @@ export default async function StudentsPage({
       </div>
 
       {totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between text-sm text-muted">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
           <span>
             Halaman {page} dari {totalPages}
           </span>
           <div className="flex gap-2">
             {page > 1 && (
-              <a
-                href={queryFor(page - 1)}
-                className="inline-flex h-9 items-center gap-1 rounded-lg border border-line bg-surface px-3 transition hover:border-accent hover:text-accent"
-              >
+              <a href={queryFor(page - 1)} className="btn btn-secondary btn-sm">
                 <Icon name="chevron-left" size={16} /> Sebelumnya
               </a>
             )}
             {page < totalPages && (
-              <a
-                href={queryFor(page + 1)}
-                className="inline-flex h-9 items-center gap-1 rounded-lg border border-line bg-surface px-3 transition hover:border-accent hover:text-accent"
-              >
+              <a href={queryFor(page + 1)} className="btn btn-secondary btn-sm">
                 Berikutnya <Icon name="chevron-right" size={16} />
               </a>
             )}

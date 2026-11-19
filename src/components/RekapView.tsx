@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { buildReports, resolvePeriod } from "@/lib/reports";
 import { periodeId, tanggalInput } from "@/lib/formatting";
-import { todayLocal, startOfMonth } from "@/lib/time";
+import { readClock, startOfMonth } from "@/lib/time";
 import { getCachedClasses } from "@/lib/cache";
 import { Icon } from "@/components/Icon";
 import { RekapTable } from "@/components/RekapTable";
@@ -42,19 +42,20 @@ export async function RekapView({
   const selectedClass = classes.find((item) => item.id === selectedId) ?? null;
   const selectedClasses = selectedClass ? [selectedClass] : classes;
 
+  const { today } = await readClock();
   const period = resolvePeriod(
     new URLSearchParams(
       Object.entries({ dari: params.dari, sampai: params.sampai }).filter(
         (entry): entry is [string, string] => typeof entry[1] === "string",
       ),
     ),
+    today,
   );
   const data: ReportData = await buildReports(
     selectedClasses.map((item) => item.id),
     period,
   );
 
-  const today = todayLocal();
   const exportQuery = new URLSearchParams();
   if (selectedClass) exportQuery.set("kelas", String(selectedClass.id));
   exportQuery.set("dari", period.start);
@@ -91,33 +92,28 @@ export async function RekapView({
   return (
     <>
       <header className="mb-5 flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-muted">Laporan</p>
-          <h1 className="font-display text-2xl text-ink">Rekap Absensi</h1>
-          <p className="mt-1 text-sm text-muted">
-            Ringkasan kehadiran dan persentase per siswa.
-          </p>
+        <div className="min-w-0">
+          <p className="eyebrow mb-2">Laporan</p>
+          <h1 className="page-title">Rekap Absensi</h1>
+          <p className="page-subtitle">Ringkasan kehadiran dan persentase per siswa.</p>
         </div>
-        <Link
-          href={exportHref}
-          className="inline-flex items-center gap-2 rounded-soft bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-strong"
-        >
+        <Link href={exportHref} className="btn btn-primary shrink-0">
           <Icon name="download" className="h-4 w-4" />
           Export Excel
         </Link>
       </header>
 
       <form
-        className="mb-5 grid gap-3 rounded-card border border-line bg-surface p-4 shadow-sm md:grid-cols-[1fr_1fr_1fr_auto]"
+        className="card card-pad mb-4 grid gap-3 md:grid-cols-[1fr_1fr_1fr_auto]"
         method="get"
         action={basePath}
       >
-        <label className="grid gap-1.5 text-sm">
-          <span className="font-medium text-ink">Kelas</span>
+        <label className="field">
+          <span className="field-label">Kelas</span>
           <select
             name="kelas"
             defaultValue={selectedClass ? String(selectedClass.id) : ""}
-            className="rounded-soft border border-line bg-canvas px-3 py-2 text-sm text-ink"
+            className="select"
           >
             <option value="">{allLabel}</option>
             {classes.map((item) => (
@@ -128,88 +124,104 @@ export async function RekapView({
           </select>
         </label>
 
-        <label className="grid gap-1.5 text-sm">
-          <span className="font-medium text-ink">Dari tanggal</span>
+        <label className="field">
+          <span className="field-label">Dari tanggal</span>
           <input
             type="date"
             name="dari"
             defaultValue={tanggalInput(period.start)}
             max={today}
-            className="rounded-soft border border-line bg-canvas px-3 py-2 text-sm text-ink"
+            className="input"
           />
         </label>
 
-        <label className="grid gap-1.5 text-sm">
-          <span className="font-medium text-ink">Sampai tanggal</span>
+        <label className="field">
+          <span className="field-label">Sampai tanggal</span>
           <input
             type="date"
             name="sampai"
             defaultValue={tanggalInput(period.end)}
             max={today}
-            className="rounded-soft border border-line bg-canvas px-3 py-2 text-sm text-ink"
+            className="input"
           />
         </label>
 
         <div className="flex flex-wrap items-end gap-2">
-          <button
-            type="submit"
-            className="inline-flex items-center gap-2 rounded-soft bg-accent px-4 py-2 text-sm font-medium text-white transition hover:bg-accent-strong"
-          >
+          <button type="submit" className="btn btn-primary">
             <Icon name="search" className="h-4 w-4" />
             Tampilkan
           </button>
-          <Link
-            href={`${basePath}?${todayQuery.toString()}`}
-            className="rounded-soft border border-line px-3 py-2 text-sm font-medium text-ink transition hover:bg-canvas"
-          >
+          <Link href={`${basePath}?${todayQuery.toString()}`} className="btn btn-secondary">
             Hari ini
           </Link>
-          <Link
-            href={`${basePath}?${monthQuery.toString()}`}
-            className="rounded-soft border border-line px-3 py-2 text-sm font-medium text-ink transition hover:bg-canvas"
-          >
+          <Link href={`${basePath}?${monthQuery.toString()}`} className="btn btn-secondary">
             Bulan ini
           </Link>
         </div>
       </form>
 
-      <div className="mb-4 grid gap-3 rounded-card border border-line bg-surface p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
+      <div className="card card-pad mb-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { label: "Total siswa", value: String(data.totalStudents) },
           { label: "Periode", value: periodeId(period.start, period.end) },
           { label: "Kehadiran", value: `${data.overallPercent}%`, accent: true },
           { label: "Kelas", value: selectedClass ? selectedClass.namaKelas : allLabel },
         ].map((item) => (
-          <div key={item.label}>
-            <span className="block text-xs uppercase tracking-wide text-muted">{item.label}</span>
-            <strong className={`text-lg ${item.accent ? "text-ok" : "text-ink"}`}>{item.value}</strong>
+          <div key={item.label} className="min-w-0">
+            <span className="stat-label">{item.label}</span>
+            <strong
+              className={`mt-1 block truncate text-lg font-bold tracking-tight ${
+                item.accent ? "text-ok" : "text-ink"
+              }`}
+            >
+              {item.value}
+            </strong>
           </div>
         ))}
       </div>
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mb-3 grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
         {[
-          { label: "Hadir", value: data.aggregate.Hadir, tone: "text-ok", icon: "check" as const },
-          { label: "Sakit", value: data.aggregate.Sakit, tone: "text-warn", icon: "clock" as const },
-          { label: "Izin", value: data.aggregate.Izin, tone: "text-accent", icon: "reports" as const },
-          { label: "Alpa", value: data.aggregate.Alpa, tone: "text-bad", icon: "x" as const },
+          {
+            label: "Hadir",
+            value: data.aggregate.Hadir,
+            tile: "bg-ok-soft text-ok",
+            icon: "check" as const,
+          },
+          {
+            label: "Sakit",
+            value: data.aggregate.Sakit,
+            tile: "bg-warn-soft text-warn",
+            icon: "clock" as const,
+          },
+          {
+            label: "Izin",
+            value: data.aggregate.Izin,
+            tile: "bg-accent-soft text-accent",
+            icon: "reports" as const,
+          },
+          {
+            label: "Alpa",
+            value: data.aggregate.Alpa,
+            tile: "bg-bad-soft text-bad",
+            icon: "x" as const,
+          },
         ].map((item) => (
-          <div
-            key={item.label}
-            className="flex items-center gap-3 rounded-card border border-line bg-surface p-4 shadow-sm"
-          >
-            <span className={`rounded-soft bg-canvas p-2 ${item.tone}`}>
-              <Icon name={item.icon} className="h-5 w-5" />
+          <div key={item.label} className="card flex items-center gap-3 p-3.5">
+            <span className={`grid size-9 shrink-0 place-items-center rounded-soft ${item.tile}`}>
+              <Icon name={item.icon} size={18} />
             </span>
-            <div>
-              <span className="block text-xs text-muted">{item.label}</span>
-              <strong className="text-lg text-ink">{item.value}</strong>
+            <div className="min-w-0">
+              <span className="stat-label">{item.label}</span>
+              <strong className="mt-1 block text-lg font-bold tabular-nums text-ink">
+                {item.value}
+              </strong>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mb-4 flex gap-3 rounded-card border border-blue-200 bg-accent-soft p-4 text-sm text-ink">
+      <div className="mb-4 flex gap-2.5 rounded-card border border-accent/25 bg-accent-soft p-3.5 text-xs leading-relaxed text-ink-soft">
         <Icon name="reports" className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
         <p>
           Hari efektif adalah jumlah tanggal yang memiliki catatan absensi pada periode ini. Siswa
@@ -219,16 +231,16 @@ export async function RekapView({
       </div>
 
       {!data.hasStudents ? (
-        <div className="rounded-card border border-line bg-surface p-10 text-center shadow-sm">
-          <h2 className="font-display text-base text-ink">Belum ada siswa</h2>
-          <p className="mt-1 text-sm text-muted">
+        <div className="empty-state">
+          <h2 className="section-title">Belum ada siswa</h2>
+          <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-muted">
             Tambahkan siswa dan kelas terlebih dahulu untuk melihat rekap.
           </p>
         </div>
       ) : !data.hasData ? (
-        <div className="rounded-card border border-line bg-surface p-10 text-center shadow-sm">
-          <h2 className="font-display text-base text-ink">Belum ada absensi pada periode ini</h2>
-          <p className="mt-1 text-sm text-muted">{emptyHint}</p>
+        <div className="empty-state">
+          <h2 className="section-title">Belum ada absensi pada periode ini</h2>
+          <p className="mx-auto mt-1.5 max-w-sm text-sm leading-relaxed text-muted">{emptyHint}</p>
         </div>
       ) : (
         <RekapTable

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { changePasswordAction } from "./actions";
 import { AppShell } from "@/components/AppShell";
+import { Icon } from "@/components/Icon";
 import { requireLogin } from "@/lib/guards";
 import { navFor } from "@/lib/nav";
 
@@ -36,56 +37,58 @@ export default async function PasswordPage({
       title="Ubah Kata Sandi"
       subtitle="Gunakan kata sandi yang kuat dan mudah Anda ingat."
     >
-      <div className="max-w-lg rounded-2xl border border-line bg-surface p-6 shadow-sm">
+      <div className="card card-pad-lg max-w-lg">
         {flash && (
           <div
-            className={`mb-4 rounded-xl border px-4 py-3 text-sm ${
+            className={`mb-4 flex items-start gap-2.5 rounded-soft border px-3 py-2.5 text-xs leading-relaxed ${
               flash.tone === "ok"
-                ? "border-green-200 bg-green-50 text-ok"
-                : "border-red-200 bg-red-50 text-bad"
+                ? "border-ok/25 bg-ok-soft text-ok"
+                : "border-bad/25 bg-bad-soft text-bad"
             }`}
           >
-            {flash.text}
+            <Icon
+              name={flash.tone === "ok" ? "check" : "info"}
+              className="mt-0.5 h-4 w-4 shrink-0"
+            />
+            <span className="font-medium">{flash.text}</span>
           </div>
         )}
 
-        <form action={changePasswordAction} className="grid gap-4">
-          <label className="grid gap-2">
-            <span className="text-sm font-medium">Kata sandi saat ini</span>
+        <form action={changePasswordAction} className="grid gap-3.5">
+          <label className="field">
+            <span className="field-label">Kata sandi saat ini</span>
             <input
               name="current_password"
               type="password"
               required
               autoComplete="current-password"
-              className="h-11 rounded-xl border border-line bg-white px-3 text-sm outline-none focus:border-accent"
+              className="input"
             />
           </label>
-          <label className="grid gap-2">
-            <span className="text-sm font-medium">Kata sandi baru</span>
+          <label className="field">
+            <span className="field-label">Kata sandi baru</span>
             <input
               name="new_password"
               type="password"
               required
               minLength={6}
               autoComplete="new-password"
-              className="h-11 rounded-xl border border-line bg-white px-3 text-sm outline-none focus:border-accent"
+              className="input"
             />
+            <span className="field-hint">Minimal 6 karakter.</span>
           </label>
-          <label className="grid gap-2">
-            <span className="text-sm font-medium">Ulangi kata sandi baru</span>
+          <label className="field">
+            <span className="field-label">Ulangi kata sandi baru</span>
             <input
               name="confirm_password"
               type="password"
               required
               minLength={6}
               autoComplete="new-password"
-              className="h-11 rounded-xl border border-line bg-white px-3 text-sm outline-none focus:border-accent"
+              className="input"
             />
           </label>
-          <button
-            type="submit"
-            className="mt-2 h-11 rounded-xl bg-accent text-sm font-semibold text-white transition hover:bg-accent-strong"
-          >
+          <button type="submit" className="btn btn-primary btn-md btn-block mt-1">
             Simpan perubahan
           </button>
         </form>
