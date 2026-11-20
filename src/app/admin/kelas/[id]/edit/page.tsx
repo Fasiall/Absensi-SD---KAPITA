@@ -51,6 +51,7 @@ export default async function ClassEditPage({
           teachers={teachers}
           mode="edit"
           values={{
+            id: schoolClass.id,
             nama_kelas: schoolClass.namaKelas,
             guru_id: schoolClass.guruId ? String(schoolClass.guruId) : "",
           }}

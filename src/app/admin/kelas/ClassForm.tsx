@@ -5,13 +5,17 @@ type Teacher = { id: number; nama: string };
 type Props = {
   action: (formData: FormData) => void | Promise<void>;
   teachers: Teacher[];
-  values?: { nama_kelas: string; guru_id: string };
+  values?: { id?: number; nama_kelas: string; guru_id: string };
   mode?: "create" | "edit";
 };
 
 export function ClassForm({ action, teachers, values, mode = "create" }: Props) {
   return (
     <form action={action} className="card card-pad-lg h-fit">
+      {mode === "edit" && values?.id ? (
+        <input type="hidden" name="id" value={values.id} />
+      ) : null}
+
       <h2 className="section-title mb-4">
         {mode === "edit" ? "Ubah kelas" : "Tambah kelas"}
       </h2>

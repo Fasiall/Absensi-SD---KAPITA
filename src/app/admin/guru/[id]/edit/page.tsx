@@ -44,6 +44,7 @@ export default async function EditTeacherPage({
         action={saveTeacherAction}
         mode="edit"
         values={{
+          id: teacher.id,
           nama: teacher.nama,
           username: teacher.username,
           aktif: teacher.aktif,

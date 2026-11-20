@@ -4,7 +4,7 @@ import { useState } from "react";
 
 type Props = {
   action: (formData: FormData) => void | Promise<void>;
-  values?: { nama: string; username: string; aktif: boolean };
+  values?: { id?: number; nama: string; username: string; aktif: boolean };
   mode?: "create" | "edit";
 };
 
@@ -13,6 +13,10 @@ export function TeacherForm({ action, values, mode = "create" }: Props) {
 
   return (
     <form action={action} className="card card-pad-lg grid max-w-md gap-3.5">
+      {mode === "edit" && values?.id ? (
+        <input type="hidden" name="id" value={values.id} />
+      ) : null}
+
       <label className="field">
         <span className="field-label">Nama guru</span>
         <input
