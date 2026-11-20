@@ -46,7 +46,11 @@ export function MobileHeaderMenu({ nav, current, user }: Props) {
         aria-label="Buka menu"
         className="grid size-10 place-items-center rounded-full text-muted transition hover:bg-canvas"
       >
-        <Icon name="classes" size={22} />
+        <span className="grid w-5 justify-items-end gap-[4px]" aria-hidden="true">
+          <span className="h-0.5 w-5 rounded-full bg-current" />
+          <span className="h-0.5 w-5 rounded-full bg-current" />
+          <span className="h-0.5 w-5 rounded-full bg-current" />
+        </span>
       </button>
 
       {open ? (

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { AppShell } from "@/components/AppShell";
 import { FlashMessages } from "@/components/FlashMessages";
 import { Icon } from "@/components/Icon";
-import { requireStaff, guardWith } from "@/lib/guards";
+import { requireAdmin, guardWith } from "@/lib/guards";
 import { navFor } from "@/lib/nav";
 import { takeFlash } from "@/lib/flash";
 import { getCachedClasses, getCachedTeachers } from "@/lib/cache";
@@ -17,7 +17,7 @@ export const instant = false;
 
 export default async function ClassesPage() {
   const [user, [classes, teachers, flashes]] = await guardWith(
-    requireStaff("/admin/kelas"),
+    requireAdmin("/admin/kelas"),
     () => Promise.all([getCachedClasses(), getCachedTeachers(), takeFlash()]),
   );
 

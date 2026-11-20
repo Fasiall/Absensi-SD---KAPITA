@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 
 import { AppShell } from "@/components/AppShell";
 import { FlashMessages } from "@/components/FlashMessages";
-import { requireStaff } from "@/lib/guards";
+import { requireAdmin } from "@/lib/guards";
 import { navFor } from "@/lib/nav";
 import { prisma } from "@/lib/db";
 import { takeFlash } from "@/lib/flash";
@@ -20,7 +20,7 @@ export default async function ClassEditPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const user = await requireStaff("/admin/kelas");
+  const user = await requireAdmin("/admin/kelas");
   const { id } = await params;
   const classId = Number.parseInt(id, 10);
   if (!Number.isFinite(classId)) notFound();

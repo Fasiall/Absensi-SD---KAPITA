@@ -88,7 +88,12 @@ export async function deleteStudentAction(formData: FormData) {
   });
   if (!student) redirect("/admin/siswa");
 
-  await prisma.student.delete({ where: { id: studentId } });
+  // Tabel attendance di database tidak memakai ON DELETE CASCADE,
+  // jadi riwayat absensi harus dihapus lebih dulu.
+  await prisma.$transaction([
+    prisma.attendance.deleteMany({ where: { studentId } }),
+    prisma.student.delete({ where: { id: studentId } }),
+  ]);
   await setFlash([
     {
       tone: "success",

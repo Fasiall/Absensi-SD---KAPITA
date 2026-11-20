@@ -19,7 +19,6 @@ export function navFor(user: SessionUser): NavItem[] {
   return [
     { href: "/guru/scan", label: "Scan", icon: "scan" },
     { href: "/guru/kelas", label: "Kelas Saya", icon: "classes" },
-    { href: "/admin/kelas", label: "Data Kelas", icon: "classes" },
     { href: "/guru/rekap", label: "Rekap", icon: "reports" },
     { href: "/cetak", label: "Kartu", icon: "cards" },
   ];

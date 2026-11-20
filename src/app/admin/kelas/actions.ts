@@ -5,12 +5,12 @@ import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/db";
 import { revalidateReferenceData } from "@/lib/cache";
-import { requireStaff } from "@/lib/guards";
+import { requireAdmin } from "@/lib/guards";
 import { isUniqueViolation, resolveTeacher, validateClass } from "@/lib/admin-forms";
 import { setFlash, type Flash } from "@/lib/flash";
 
 export async function saveClassAction(formData: FormData) {
-  await requireStaff("/admin/kelas");
+  await requireAdmin("/admin/kelas");
 
   const classId = Number.parseInt(String(formData.get("id") ?? ""), 10);
   const isEdit = Number.isFinite(classId) && classId > 0;
@@ -57,7 +57,7 @@ export async function saveClassAction(formData: FormData) {
 }
 
 export async function deleteClassAction(formData: FormData) {
-  await requireStaff("/admin/kelas");
+  await requireAdmin("/admin/kelas");
   const classId = Number.parseInt(String(formData.get("id") ?? ""), 10);
   if (!Number.isFinite(classId)) redirect("/admin/kelas");
 

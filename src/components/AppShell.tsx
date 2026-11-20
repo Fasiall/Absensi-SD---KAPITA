@@ -54,12 +54,9 @@ export function AppShell({
     <div className="min-h-screen bg-canvas">
       <header className="sticky top-0 z-30 border-b border-line bg-surface">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6">
-          <a href="/" className="flex items-center gap-2.5 text-accent">
-            <span className="grid size-9 place-items-center rounded-xl bg-accent text-white">
-              <Icon name="qr" size={20} />
-            </span>
-            <span className="hidden text-sm font-semibold tracking-wide text-ink sm:block">
-              Absensi
+          <a href="/" className="flex min-w-0 items-center gap-2.5 text-accent">
+            <span className="truncate text-sm font-semibold tracking-wide text-ink sm:text-base">
+              SDN Purwodadi Simpang
             </span>
           </a>
 

@@ -3,14 +3,14 @@ import { revalidatePath } from "next/cache";
 
 import { prisma } from "@/lib/db";
 import { revalidateReferenceData } from "@/lib/cache";
-import { requireStaff } from "@/lib/guards";
+import { requireAdmin } from "@/lib/guards";
 import { setFlash } from "@/lib/flash";
 
 export async function POST(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  await requireStaff("/admin/kelas");
+  await requireAdmin("/admin/kelas");
   const { id } = await params;
   const classId = Number.parseInt(id, 10);
   if (!Number.isFinite(classId)) redirect("/admin/kelas");
